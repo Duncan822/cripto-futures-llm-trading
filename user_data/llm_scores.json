@@ -1,0 +1,26 @@
+{
+  "mistral": {
+    "valid_strategies": 4,
+    "total_attempts": 4,
+    "success_rate": 1.0,
+    "last_failure": null,
+    "consecutive_failures": 0,
+    "blacklisted_until": null
+  },
+  "llama2": {
+    "valid_strategies": 5,
+    "total_attempts": 5,
+    "success_rate": 1.0,
+    "last_failure": null,
+    "consecutive_failures": 0,
+    "blacklisted_until": null
+  },
+  "phi3": {
+    "valid_strategies": 6,
+    "total_attempts": 6,
+    "success_rate": 1.0,
+    "last_failure": null,
+    "consecutive_failures": 0,
+    "blacklisted_until": null
+  }
+}

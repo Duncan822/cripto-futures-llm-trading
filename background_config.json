@@ -1,0 +1,69 @@
+{
+  "auto_validation": true,
+  "auto_backtest": true,
+  "max_strategies": 30,
+  "generation_interval": 7200,
+  "backtest_interval": 7200,
+  "cleanup_old_strategies": true,
+  "strategy_types": ["volatility", "scalping", "momentum", "breakout"],
+  "models": ["cogito:3b", "phi3:mini", "cogito:8b", "mistral:7b-instruct-q4_0"],
+  "min_backtest_score": 0.1,
+  "max_concurrent_tasks": 2,
+  "max_strategy_age_days": 20,
+  "backtest_timerange": "20240101-20241231",
+  "log_level": "INFO",
+  "enable_notifications": false,
+  "notification_email": "",
+  "webhook_url": "",
+  "performance_threshold": 0.05,
+  "cpu_optimization": {
+    "enable": true,
+    "max_memory_usage": "4GB",
+    "threads": 4,
+    "batch_size": 1,
+    "timeout_seconds": 120
+  },
+  "model_selection": {
+    "fast_generation": "cogito:3b",
+    "quality_analysis": "cogito:8b",
+    "optimization": "cogito:8b",
+    "fallback": "phi3:mini"
+  },
+  "cogito_features": {
+    "enable_deep_thinking": true,
+    "deep_thinking_prompt": "Enable deep thinking subroutine.",
+    "use_for_complex_tasks": true
+  },
+  "risk_management": {
+    "max_drawdown": 0.15,
+    "max_risk_per_trade": 0.02,
+    "position_sizing": "fixed"
+  },
+  "optimization": {
+    "enable_hyperopt": true,
+    "hyperopt_epochs": 50,
+    "optimization_interval": 21600
+  },
+  "dry_run": {
+    "auto_dry_run": true,
+    "dry_run_interval": 21600,
+    "max_dry_runs": 3,
+    "duration_days": 7,
+    "stake_amount": 100.0,
+    "max_open_trades": 3,
+    "pairs": ["BTC/USDT:USDT", "ETH/USDT:USDT", "SOL/USDT:USDT"],
+    "risk_limits": {
+      "max_drawdown": 0.15,
+      "max_consecutive_losses": 5,
+      "min_win_rate": 0.4,
+      "max_daily_loss": 0.10
+    }
+  },
+  "live_export": {
+    "export_interval": 43200,
+    "min_backtest_score": 0.1,
+    "export_optimized_only": true,
+    "max_live_strategies": 10,
+    "backup_old_strategies": true
+  }
+} 

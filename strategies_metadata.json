@@ -1,0 +1,145 @@
+{
+  "ScalpingStrategy_cogito:8b_20250630_132110": {
+    "name": "ScalpingStrategy_cogito:8b_20250630_132110",
+    "file_path": "user_data/strategies/scalpingstrategy_cogito:8b_20250630_132110.py",
+    "strategy_type": "scalping",
+    "model_used": "cogito:8b",
+    "generation_time": "2025-06-30T13:30:19.130345",
+    "validation_status": "validated",
+    "backtest_score": null,
+    "last_backtest": null,
+    "is_active": false
+  },
+  "ScalpingStrategy_phi3:mini_20250630_153020": {
+    "name": "ScalpingStrategy_phi3:mini_20250630_153020",
+    "file_path": "user_data/strategies/scalpingstrategy_phi3:mini_20250630_153020.py",
+    "strategy_type": "scalping",
+    "model_used": "phi3:mini",
+    "generation_time": "2025-06-30T15:39:28.950878",
+    "validation_status": "validated",
+    "backtest_score": null,
+    "last_backtest": null,
+    "is_active": false
+  },
+  "BreakoutStrategy_mistral:7b-instruct-q4_0_20250630_173929": {
+    "name": "BreakoutStrategy_mistral:7b-instruct-q4_0_20250630_173929",
+    "file_path": "user_data/strategies/breakoutstrategy_mistral:7b-instruct-q4_0_20250630_173929.py",
+    "strategy_type": "breakout",
+    "model_used": "mistral:7b-instruct-q4_0",
+    "generation_time": "2025-06-30T17:48:27.263750",
+    "validation_status": "validated",
+    "backtest_score": null,
+    "last_backtest": null,
+    "is_active": false
+  },
+  "BreakoutStrategy_phi3:mini_20250630_202331": {
+    "name": "BreakoutStrategy_phi3:mini_20250630_202331",
+    "file_path": "user_data/strategies/breakoutstrategy_phi3:mini_20250630_202331.py",
+    "strategy_type": "breakout",
+    "model_used": "phi3:mini",
+    "generation_time": "2025-06-30T20:32:30.055073",
+    "validation_status": "validated",
+    "backtest_score": null,
+    "last_backtest": null,
+    "is_active": false
+  },
+  "VolatilityStrategy_cogito:8b_20250630_223230": {
+    "name": "VolatilityStrategy_cogito:8b_20250630_223230",
+    "file_path": "user_data/strategies/volatilitystrategy_cogito:8b_20250630_223230.py",
+    "strategy_type": "volatility",
+    "model_used": "cogito:8b",
+    "generation_time": "2025-06-30T22:41:46.288490",
+    "validation_status": "validated",
+    "backtest_score": null,
+    "last_backtest": null,
+    "is_active": false
+  },
+  "VolatilityStrategy_mistral:7b-instruct-q4_0_20250701_004147": {
+    "name": "VolatilityStrategy_mistral:7b-instruct-q4_0_20250701_004147",
+    "file_path": "user_data/strategies/volatilitystrategy_mistral:7b-instruct-q4_0_20250701_004147.py",
+    "strategy_type": "volatility",
+    "model_used": "mistral:7b-instruct-q4_0",
+    "generation_time": "2025-07-01T00:51:03.675778",
+    "validation_status": "validated",
+    "backtest_score": null,
+    "last_backtest": null,
+    "is_active": false
+  },
+  "MomentumStrategy_cogito:3b_20250701_025103": {
+    "name": "MomentumStrategy_cogito:3b_20250701_025103",
+    "file_path": "user_data/strategies/momentumstrategy_cogito:3b_20250701_025103.py",
+    "strategy_type": "momentum",
+    "model_used": "cogito:3b",
+    "generation_time": "2025-07-01T02:59:55.414773",
+    "validation_status": "validated",
+    "backtest_score": null,
+    "last_backtest": null,
+    "is_active": false
+  },
+  "MomentumStrategy_mistral:7b-instruct-q4_0_20250701_062543": {
+    "name": "MomentumStrategy_mistral:7b-instruct-q4_0_20250701_062543",
+    "file_path": "user_data/strategies/momentumstrategy_mistral:7b-instruct-q4_0_20250701_062543.py",
+    "strategy_type": "momentum",
+    "model_used": "mistral:7b-instruct-q4_0",
+    "generation_time": "2025-07-01T06:34:35.894430",
+    "validation_status": "validated",
+    "backtest_score": null,
+    "last_backtest": null,
+    "is_active": false
+  },
+  "VolatilityStrategy_mistral:7b-instruct-q4_0_20250701_083435": {
+    "name": "VolatilityStrategy_mistral:7b-instruct-q4_0_20250701_083435",
+    "file_path": "user_data/strategies/volatilitystrategy_mistral:7b-instruct-q4_0_20250701_083435.py",
+    "strategy_type": "volatility",
+    "model_used": "mistral:7b-instruct-q4_0",
+    "generation_time": "2025-07-01T08:43:53.145860",
+    "validation_status": "validated",
+    "backtest_score": null,
+    "last_backtest": null,
+    "is_active": false
+  },
+  "ScalpingStrategy_mistral:7b-instruct-q4_0_20250701_112634": {
+    "name": "ScalpingStrategy_mistral:7b-instruct-q4_0_20250701_112634",
+    "file_path": "user_data/strategies/scalpingstrategy_mistral:7b-instruct-q4_0_20250701_112634.py",
+    "strategy_type": "scalping",
+    "model_used": "mistral:7b-instruct-q4_0",
+    "generation_time": "2025-07-01T11:35:43.508514",
+    "validation_status": "validated",
+    "backtest_score": null,
+    "last_backtest": null,
+    "is_active": false
+  },
+  "MomentumStrategy_cogito:3b_20250701_133543": {
+    "name": "MomentumStrategy_cogito:3b_20250701_133543",
+    "file_path": "user_data/strategies/momentumstrategy_cogito:3b_20250701_133543.py",
+    "strategy_type": "momentum",
+    "model_used": "cogito:3b",
+    "generation_time": "2025-07-01T13:44:36.411047",
+    "validation_status": "validated",
+    "backtest_score": null,
+    "last_backtest": null,
+    "is_active": false
+  },
+  "VolatilityStrategy_mistral:7b-instruct-q4_0_20250701_172715": {
+    "name": "VolatilityStrategy_mistral:7b-instruct-q4_0_20250701_172715",
+    "file_path": "user_data/strategies/volatilitystrategy_mistral:7b-instruct-q4_0_20250701_172715.py",
+    "strategy_type": "volatility",
+    "model_used": "mistral:7b-instruct-q4_0",
+    "generation_time": "2025-07-01T17:36:32.093190",
+    "validation_status": "validated",
+    "backtest_score": null,
+    "last_backtest": null,
+    "is_active": false
+  },
+  "VolatilityStrategy_cogito:3b_20250701_193633": {
+    "name": "VolatilityStrategy_cogito:3b_20250701_193633",
+    "file_path": "user_data/strategies/volatilitystrategy_cogito:3b_20250701_193633.py",
+    "strategy_type": "volatility",
+    "model_used": "cogito:3b",
+    "generation_time": "2025-07-01T19:45:49.672934",
+    "validation_status": "validated",
+    "backtest_score": null,
+    "last_backtest": null,
+    "is_active": false
+  }
+}
