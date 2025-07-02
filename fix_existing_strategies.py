@@ -23,21 +23,21 @@ def rename_strategy_files() -> Dict[str, str]:
     Restituisce un dizionario {vecchio_nome: nuovo_nome}
     """
     print("🔧 Rinominazione file strategie...")
-    
+
     strategies_dir = "user_data/strategies"
     renamed_files = {}
-    
+
     if not os.path.exists(strategies_dir):
         print("❌ Directory strategie non trovata")
         return renamed_files
-    
+
     # Trova tutti i file .py nella directory strategie
     for filename in os.listdir(strategies_dir):
         if filename.endswith('.py') and ':' in filename:  # Solo file con caratteri non validi
             old_path = os.path.join(strategies_dir, filename)
             new_filename = fix_strategy_name(filename)
             new_path = os.path.join(strategies_dir, new_filename)
-            
+
             if old_path != new_path:
                 try:
                     shutil.move(old_path, new_path)
@@ -47,23 +47,23 @@ def rename_strategy_files() -> Dict[str, str]:
                     print(f"  ✅ {old_name} → {new_name}")
                 except Exception as e:
                     print(f"  ❌ Errore nel rinominare {filename}: {e}")
-    
+
     print(f"📊 Rinominati {len(renamed_files)} file")
     return renamed_files
 
 def update_metadata(renamed_files: Dict[str, str]):
     """Aggiorna i metadati delle strategie con i nuovi nomi."""
     print("\n📝 Aggiornamento metadati...")
-    
+
     metadata_file = "strategies_metadata.json"
     if not os.path.exists(metadata_file):
         print("❌ File metadati non trovato")
         return
-    
+
     try:
         with open(metadata_file, 'r') as f:
             data = json.load(f)
-        
+
         # Aggiorna i nomi delle strategie
         updated_data = {}
         for old_name, strategy_data in data.items():
@@ -71,46 +71,46 @@ def update_metadata(renamed_files: Dict[str, str]):
                 new_name = renamed_files[old_name]
                 strategy_data['name'] = new_name
                 strategy_data['file_path'] = strategy_data['file_path'].replace(
-                    f"{old_name.lower()}.py", 
+                    f"{old_name.lower()}.py",
                     f"{new_name.lower()}.py"
                 )
                 updated_data[new_name] = strategy_data
                 print(f"  ✅ Metadati aggiornati: {old_name} → {new_name}")
             else:
                 updated_data[old_name] = strategy_data
-        
+
         # Salva i metadati aggiornati
         with open(metadata_file, 'w') as f:
             json.dump(updated_data, f, indent=2)
-        
+
         print(f"📊 Metadati aggiornati per {len(renamed_files)} strategie")
-        
+
     except Exception as e:
         print(f"❌ Errore nell'aggiornamento metadati: {e}")
 
 def optimize_low_score_strategies():
     """Ottimizza le strategie con score basso o nullo."""
     print("\n🔧 Ottimizzazione strategie con score basso...")
-    
+
     try:
         from background_agent import BackgroundAgent
-        
+
         agent = BackgroundAgent()
-        
+
         # Trova strategie da ottimizzare
         strategies_to_optimize = []
         for name, metadata in agent.strategies_metadata.items():
-            if (metadata.backtest_score is None or 
+            if (metadata.backtest_score is None or
                 metadata.backtest_score < 0.1) and \
                 metadata.validation_status == 'validated':
                 strategies_to_optimize.append((name, metadata))
-        
+
         if not strategies_to_optimize:
             print("ℹ️ Nessuna strategia da ottimizzare trovata")
             return
-        
+
         print(f"🎯 Trovate {len(strategies_to_optimize)} strategie da ottimizzare")
-        
+
         # Ordina per priorità (cogito:8b prima)
         def get_priority(metadata):
             priority = 0
@@ -122,45 +122,45 @@ def optimize_low_score_strategies():
             elif 'mistral' in model:
                 priority += 3
             return priority
-        
+
         strategies_to_optimize.sort(key=lambda x: get_priority(x[1]), reverse=True)
-        
+
         # Ottimizza le prime 5 strategie
         for i, (name, metadata) in enumerate(strategies_to_optimize[:5]):
             print(f"\n🔧 Ottimizzazione {i+1}/5: {name}")
             print(f"   Modello: {metadata.model_used}")
             print(f"   Score attuale: {metadata.backtest_score}")
-            
+
             success = agent.optimize_strategy_automatically(name)
             if success:
                 print(f"   ✅ Ottimizzazione completata")
             else:
                 print(f"   ⚠️ Nessuna ottimizzazione necessaria")
-        
+
         print(f"\n✅ Ottimizzazione completata per {min(5, len(strategies_to_optimize))} strategie")
-        
+
     except Exception as e:
         print(f"❌ Errore nell'ottimizzazione: {e}")
 
 def test_fixed_strategies():
     """Testa alcune strategie corrette per verificare il funzionamento."""
     print("\n🧪 Test strategie corrette...")
-    
+
     try:
         from background_agent import BackgroundAgent
-        
+
         agent = BackgroundAgent()
-        
+
         # Trova strategie corrette (senza caratteri non validi)
         valid_strategies = []
         for name, metadata in agent.strategies_metadata.items():
             if ':' not in name and metadata.validation_status in ['validated', 'optimized']:
                 valid_strategies.append((name, metadata))
-        
+
         if not valid_strategies:
             print("ℹ️ Nessuna strategia valida trovata")
             return
-        
+
         # Ordina per priorità
         def get_priority(metadata):
             priority = 0
@@ -172,24 +172,24 @@ def test_fixed_strategies():
             elif 'mistral' in model:
                 priority += 3
             return priority
-        
+
         valid_strategies.sort(key=lambda x: get_priority(x[1]), reverse=True)
-        
+
         # Testa le prime 3 strategie
         for i, (name, metadata) in enumerate(valid_strategies[:3]):
             print(f"\n🧪 Test {i+1}/3: {name}")
             print(f"   Modello: {metadata.model_used}")
             print(f"   Status: {metadata.validation_status}")
-            
+
             # Esegui backtest
             score = agent.backtest_strategy(name)
             if score is not None:
                 print(f"   ✅ Backtest completato: score {score:.3f}")
             else:
                 print(f"   ❌ Backtest fallito")
-        
+
         print(f"\n✅ Test completati per {min(3, len(valid_strategies))} strategie")
-        
+
     except Exception as e:
         print(f"❌ Errore nel test: {e}")
 
@@ -197,20 +197,20 @@ def main():
     """Funzione principale."""
     print("🚀 Correzione strategie esistenti")
     print("=" * 50)
-    
+
     # 1. Rinomina file
     renamed_files = rename_strategy_files()
-    
+
     if renamed_files:
         # 2. Aggiorna metadati
         update_metadata(renamed_files)
-        
+
         # 3. Ottimizza strategie
         optimize_low_score_strategies()
-        
+
         # 4. Testa strategie corrette
         test_fixed_strategies()
-        
+
         print("\n" + "=" * 50)
         print("✅ Correzione completata!")
         print("\n💡 Prossimi passi:")
@@ -222,4 +222,4 @@ def main():
         print("   Le strategie esistenti sono già corrette")
 
 if __name__ == "__main__":
-    main() 
+    main()

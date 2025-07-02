@@ -83,4 +83,4 @@ if __name__ == "__main__":
     file_paths = agent.generate_and_save_strategies(symbol, timeframe="1h", n=3)
     print("Strategie salvate:")
     for path in file_paths:
-        print("-", path) 
+        print("-", path)

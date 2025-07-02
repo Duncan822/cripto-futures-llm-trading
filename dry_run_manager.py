@@ -27,7 +27,7 @@ class DryRunConfig:
     max_open_trades: int = 3
     pairs: List[str] = None
     risk_limits: Dict[str, float] = None
-    
+
     def __post_init__(self):
         if self.pairs is None:
             self.pairs = ["BTC/USDT:USDT", "ETH/USDT:USDT", "SOL/USDT:USDT"]
@@ -58,17 +58,17 @@ class DryRunManager:
     """
     Gestisce il dry run delle strategie ottimizzate.
     """
-    
+
     def __init__(self, db_path: str = "dry_run.db"):
         self.db_path = db_path
         self.active_runs: Dict[str, DryRunConfig] = {}
         self.performance_metrics: Dict[str, PerformanceMetrics] = {}
         self.monitoring_thread = None
         self.is_monitoring = False
-        
+
         # Inizializza database
         self._init_database()
-        
+
         # Criteri di successo
         self.success_criteria = {
             "min_win_rate": 0.4,
@@ -77,12 +77,12 @@ class DryRunManager:
             "min_total_return": 0.05,
             "max_consecutive_losses": 5
         }
-    
+
     def _init_database(self):
         """Inizializza il database per il dry run."""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
-        
+
         # Tabella per i dry run
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS dry_runs (
@@ -95,7 +95,7 @@ class DryRunManager:
                 results TEXT
             )
         ''')
-        
+
         # Tabella per le metriche giornaliere
         cursor.execute('''
             CREATE TABLE IF NOT EXISTS daily_metrics (
@@ -111,10 +111,10 @@ class DryRunManager:
                 daily_return REAL
             )
         ''')
-        
+
         conn.commit()
         conn.close()
-    
+
     def start_dry_run(self, strategy_name: str, config: Optional[DryRunConfig] = None) -> bool:
         """
         Avvia un dry run per una strategia.
@@ -122,20 +122,20 @@ class DryRunManager:
         try:
             if config is None:
                 config = DryRunConfig(strategy_name)
-            
+
             # Verifica che la strategia esista
             strategy_file = f"user_data/strategies/{strategy_name.lower()}.py"
             if not os.path.exists(strategy_file):
                 logger.error(f"❌ Strategia {strategy_name} non trovata")
                 return False
-            
+
             # Crea configurazione Freqtrade per dry run
             freqtrade_config = self._create_freqtrade_config(config)
             config_file = f"config_dry_run_{strategy_name}.json"
-            
+
             with open(config_file, 'w') as f:
                 json.dump(freqtrade_config, f, indent=2)
-            
+
             # Avvia Freqtrade in dry run
             cmd = [
                 'freqtrade', 'trade',
@@ -143,10 +143,10 @@ class DryRunManager:
                 '--config', config_file,
                 '--db-url', f'sqlite:///dry_run_{strategy_name}.db'
             ]
-            
+
             logger.info(f"🚀 Avvio dry run per {strategy_name}")
             logger.info(f"   Comando: {' '.join(cmd)}")
-            
+
             # Avvia processo in background
             process = subprocess.Popen(
                 cmd,
@@ -154,24 +154,24 @@ class DryRunManager:
                 stderr=subprocess.PIPE,
                 text=True
             )
-            
+
             # Salva configurazione
             self.active_runs[strategy_name] = config
             self.performance_metrics[strategy_name] = PerformanceMetrics(
                 strategy_name=strategy_name,
                 start_time=datetime.now()
             )
-            
+
             # Salva nel database
             self._save_dry_run_to_db(strategy_name, config, process.pid)
-            
+
             logger.info(f"✅ Dry run avviato per {strategy_name} (PID: {process.pid})")
             return True
-            
+
         except Exception as e:
             logger.error(f"❌ Errore nell'avvio dry run per {strategy_name}: {e}")
             return False
-    
+
     def _create_freqtrade_config(self, config: DryRunConfig) -> Dict[str, Any]:
         """Crea configurazione Freqtrade per dry run."""
         base_config = {
@@ -244,22 +244,22 @@ class DryRunManager:
                 "process_throttle_secs": 5
             }
         }
-        
+
         return base_config
-    
+
     def _save_dry_run_to_db(self, strategy_name: str, config: DryRunConfig, pid: int):
         """Salva informazioni del dry run nel database."""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
-        
+
         cursor.execute('''
             INSERT INTO dry_runs (strategy_name, start_time, config)
             VALUES (?, ?, ?)
         ''', (strategy_name, datetime.now(), json.dumps(config.__dict__)))
-        
+
         conn.commit()
         conn.close()
-    
+
     def stop_dry_run(self, strategy_name: str) -> bool:
         """
         Ferma un dry run e genera report.
@@ -268,43 +268,43 @@ class DryRunManager:
             if strategy_name not in self.active_runs:
                 logger.warning(f"⚠️ Dry run {strategy_name} non attivo")
                 return False
-            
+
             # Ferma processo Freqtrade
             cmd = f"pkill -f 'freqtrade.*{strategy_name}'"
             subprocess.run(cmd, shell=True)
-            
+
             # Genera report finale
             report = self.generate_report(strategy_name)
-            
+
             # Aggiorna database
             self._update_dry_run_status(strategy_name, "completed", report)
-            
+
             # Rimuovi da attivi
             del self.active_runs[strategy_name]
             if strategy_name in self.performance_metrics:
                 del self.performance_metrics[strategy_name]
-            
+
             logger.info(f"✅ Dry run fermato per {strategy_name}")
             return True
-            
+
         except Exception as e:
             logger.error(f"❌ Errore nel fermare dry run {strategy_name}: {e}")
             return False
-    
+
     def _update_dry_run_status(self, strategy_name: str, status: str, results: str = None):
         """Aggiorna status del dry run nel database."""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
-        
+
         cursor.execute('''
-            UPDATE dry_runs 
+            UPDATE dry_runs
             SET end_time = ?, status = ?, results = ?
             WHERE strategy_name = ? AND status = 'running'
         ''', (datetime.now(), status, results, strategy_name))
-        
+
         conn.commit()
         conn.close()
-    
+
     def monitor_performance(self):
         """
         Monitora performance dei dry run attivi.
@@ -314,13 +314,13 @@ class DryRunManager:
                 for strategy_name in list(self.active_runs.keys()):
                     self._update_performance_metrics(strategy_name)
                     self._check_risk_limits(strategy_name)
-                
+
                 time.sleep(300)  # Controlla ogni 5 minuti
-                
+
             except Exception as e:
                 logger.error(f"❌ Errore nel monitoraggio: {e}")
                 time.sleep(60)
-    
+
     def _update_performance_metrics(self, strategy_name: str):
         """Aggiorna metriche di performance per una strategia."""
         try:
@@ -328,64 +328,64 @@ class DryRunManager:
             db_path = f"dry_run_{strategy_name}.db"
             if not os.path.exists(db_path):
                 return
-            
+
             conn = sqlite3.connect(db_path)
             cursor = conn.cursor()
-            
+
             # Calcola metriche
             cursor.execute('''
-                SELECT 
+                SELECT
                     COUNT(*) as total_trades,
                     SUM(CASE WHEN profit > 0 THEN 1 ELSE 0 END) as winning_trades,
                     SUM(profit) as total_profit,
                     MAX(profit) as max_profit,
                     MIN(profit) as max_loss
-                FROM trades 
+                FROM trades
                 WHERE strategy = ?
             ''', (strategy_name,))
-            
+
             result = cursor.fetchone()
             if result:
                 total_trades, winning_trades, total_profit, max_profit, max_loss = result
-                
+
                 if strategy_name in self.performance_metrics:
                     metrics = self.performance_metrics[strategy_name]
                     metrics.total_trades = total_trades or 0
                     metrics.win_rate = (winning_trades / total_trades) if total_trades > 0 else 0
                     metrics.total_return = total_profit or 0
                     metrics.max_drawdown = abs(max_loss) if max_loss else 0
-            
+
             conn.close()
-            
+
         except Exception as e:
             logger.error(f"❌ Errore nell'aggiornamento metriche {strategy_name}: {e}")
-    
+
     def _check_risk_limits(self, strategy_name: str):
         """Controlla limiti di rischio e ferma se necessario."""
         if strategy_name not in self.active_runs or strategy_name not in self.performance_metrics:
             return
-        
+
         config = self.active_runs[strategy_name]
         metrics = self.performance_metrics[strategy_name]
-        
+
         # Controlla drawdown
         if metrics.current_drawdown > config.risk_limits["max_drawdown"]:
             logger.warning(f"🚨 Drawdown limite superato per {strategy_name}: {metrics.current_drawdown:.2%}")
             self.stop_dry_run(strategy_name)
             return
-        
+
         # Controlla consecutive losses
         if metrics.consecutive_losses > config.risk_limits["max_consecutive_losses"]:
             logger.warning(f"🚨 Troppe perdite consecutive per {strategy_name}: {metrics.consecutive_losses}")
             self.stop_dry_run(strategy_name)
             return
-        
+
         # Controlla win rate
         if metrics.total_trades > 10 and metrics.win_rate < config.risk_limits["min_win_rate"]:
             logger.warning(f"🚨 Win rate troppo basso per {strategy_name}: {metrics.win_rate:.2%}")
             self.stop_dry_run(strategy_name)
             return
-    
+
     def start_monitoring(self):
         """Avvia il monitoraggio in background."""
         if self.monitoring_thread is None or not self.monitoring_thread.is_alive():
@@ -393,14 +393,14 @@ class DryRunManager:
             self.monitoring_thread = threading.Thread(target=self.monitor_performance, daemon=True)
             self.monitoring_thread.start()
             logger.info("✅ Monitoraggio dry run avviato")
-    
+
     def stop_monitoring(self):
         """Ferma il monitoraggio."""
         self.is_monitoring = False
         if self.monitoring_thread:
             self.monitoring_thread.join(timeout=5)
         logger.info("🛑 Monitoraggio dry run fermato")
-    
+
     def get_status(self) -> Dict[str, Any]:
         """Restituisce lo status dei dry run attivi."""
         status = {
@@ -408,7 +408,7 @@ class DryRunManager:
             'total_runs': len(self.performance_metrics),
             'monitoring_active': self.is_monitoring
         }
-        
+
         # Dettagli dry run attivi
         active_details = {}
         for strategy_name, config in self.active_runs.items():
@@ -422,17 +422,17 @@ class DryRunManager:
                 'total_trades': metrics.total_trades if metrics else 0,
                 'status': metrics.status if metrics else 'running'
             }
-        
+
         status['active_details'] = active_details
         return status
-    
+
     def generate_report(self, strategy_name: str) -> Dict[str, Any]:
         """Genera report finale per una strategia."""
         if strategy_name not in self.performance_metrics:
             return {}
-        
+
         metrics = self.performance_metrics[strategy_name]
-        
+
         # Valuta successo
         success = (
             metrics.win_rate >= self.success_criteria["min_win_rate"] and
@@ -440,7 +440,7 @@ class DryRunManager:
             metrics.total_return >= self.success_criteria["min_total_return"] and
             metrics.consecutive_losses <= self.success_criteria["max_consecutive_losses"]
         )
-        
+
         report = {
             'strategy_name': strategy_name,
             'start_time': metrics.start_time.isoformat(),
@@ -455,55 +455,55 @@ class DryRunManager:
             'success': success,
             'recommendation': 'LIVE_READY' if success else 'NEEDS_OPTIMIZATION'
         }
-        
+
         return report
-    
+
     def get_all_reports(self) -> List[Dict[str, Any]]:
         """Restituisce tutti i report completati."""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
-        
+
         cursor.execute('''
             SELECT strategy_name, start_time, end_time, results
-            FROM dry_runs 
+            FROM dry_runs
             WHERE status = 'completed'
             ORDER BY end_time DESC
         ''')
-        
+
         reports = []
         for row in cursor.fetchall():
             strategy_name, start_time, end_time, results = row
             if results:
                 report = json.loads(results)
                 reports.append(report)
-        
+
         conn.close()
         return reports
 
 def main():
     """Funzione principale per testare il Dry Run Manager."""
     manager = DryRunManager()
-    
+
     # Test con strategia esistente
     test_strategy = "VolatilityStrategy_cogito:8b_20250630_223230"
-    
+
     print(f"🧪 Test Dry Run Manager con {test_strategy}")
-    
+
     # Avvia dry run
     success = manager.start_dry_run(test_strategy)
     if success:
         print(f"✅ Dry run avviato per {test_strategy}")
-        
+
         # Avvia monitoraggio
         manager.start_monitoring()
-        
+
         # Simula monitoraggio per 30 secondi
         time.sleep(30)
-        
+
         # Ferma dry run
         manager.stop_dry_run(test_strategy)
         manager.stop_monitoring()
-        
+
         # Genera report
         report = manager.generate_report(test_strategy)
         print(f"📊 Report: {json.dumps(report, indent=2)}")
@@ -511,4 +511,4 @@ def main():
         print(f"❌ Errore nell'avvio dry run per {test_strategy}")
 
 if __name__ == "__main__":
-    main() 
+    main()

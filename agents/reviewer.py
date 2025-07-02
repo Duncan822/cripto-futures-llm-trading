@@ -15,4 +15,4 @@ class ReviewerAgent:
             "approved": True,
             "feedback": "La strategia è promettente ma migliorabile. Consiglio Hyperopt.",
             "suggest_hyperopt": True
-        } 
+        }

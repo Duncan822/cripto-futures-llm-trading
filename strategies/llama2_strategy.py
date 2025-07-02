@@ -1,4 +1,3 @@
-
 Sure, here's a possible strategy for Freqtrade on BTCUSDT with a 5-minute time frame, trailing stops, and risk management:
 
 1. Set the entry price based on your analysis of market trends and technical indicators. For this example, let's assume the entry price is $8,000.

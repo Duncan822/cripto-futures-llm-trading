@@ -47,45 +47,45 @@ def test_optimizer_with_existing_strategies():
     """Testa l'ottimizzatore con strategie esistenti."""
     print("🧪 TEST OPTIMIZER AGENT")
     print("=" * 50)
-    
+
     # Carica metadati
     metadata = load_strategies_metadata()
     if not metadata:
         print("❌ Nessuna strategia trovata nei metadati")
         return
-    
+
     # Inizializza ottimizzatore
     optimizer = OptimizerAgent(default_model="phi3")
-    
+
     # Simula risultati backtest
     backtest_results = simulate_backtest_results()
-    
+
     print(f"📊 Strategie trovate: {len(metadata)}")
     print(f"📈 Risultati backtest simulati: {backtest_results}")
     print()
-    
+
     # Testa con la prima strategia
     strategy_name = list(metadata.keys())[0]
     strategy_info = metadata[strategy_name]
-    
+
     print(f"🎯 Testando ottimizzazione per: {strategy_name}")
     print(f"📁 File: {strategy_info['file_path']}")
     print(f"📅 Generata: {strategy_info['generation_time']}")
     print()
-    
+
     # Carica codice strategia
     strategy_code = load_strategy_code(strategy_info['file_path'])
     if not strategy_code:
         print("❌ Impossibile caricare il codice della strategia")
         return
-    
+
     print("📝 Codice originale (prime 10 righe):")
     print("-" * 40)
     for i, line in enumerate(strategy_code.split('\n')[:10]):
         print(f"{i+1:2d}: {line}")
     print("...")
     print()
-    
+
     # Esegui ottimizzazione
     print("🔧 Avvio ottimizzazione...")
     try:
@@ -94,16 +94,16 @@ def test_optimizer_with_existing_strategies():
             backtest_results=backtest_results,
             strategy_name=strategy_name
         )
-        
+
         # Mostra risultati
         print("✅ Ottimizzazione completata!")
         print()
         print(optimizer.get_optimization_summary(result))
-        
+
         if result.success and result.improvements:
             print("\n📝 Codice ottimizzato (prime 15 righe):")
             print("-" * 40)
-            
+
             # Mostra le modifiche principali
             if result.changes_made:
                 print("🔍 MODIFICHE PRINCIPALI:")
@@ -111,16 +111,16 @@ def test_optimizer_with_existing_strategies():
                     if changes:
                         print(f"  - {change_type}: {changes}")
                 print()
-            
+
             # Mostra il codice ottimizzato
             optimized_code = optimizer._apply_optimizations(
                 strategy_code, result.improvements, strategy_name
             )
-            
+
             for i, line in enumerate(optimized_code.split('\n')[:15]):
                 print(f"{i+1:2d}: {line}")
             print("...")
-            
+
             # Salva strategia ottimizzata
             optimized_file_path = strategy_info['file_path'].replace('.py', '_optimized.py')
             try:
@@ -129,7 +129,7 @@ def test_optimizer_with_existing_strategies():
                 print(f"\n💾 Strategia ottimizzata salvata in: {optimized_file_path}")
             except Exception as e:
                 print(f"❌ Errore nel salvataggio: {e}")
-        
+
     except Exception as e:
         print(f"❌ Errore durante l'ottimizzazione: {e}")
         import traceback
@@ -139,53 +139,53 @@ def test_optimizer_analysis():
     """Testa solo l'analisi delle strategie."""
     print("🔍 TEST ANALISI STRATEGIE")
     print("=" * 40)
-    
+
     # Carica una strategia
     metadata = load_strategies_metadata()
     if not metadata:
         print("❌ Nessuna strategia trovata")
         return
-    
+
     strategy_name = list(metadata.keys())[0]
     strategy_info = metadata[strategy_name]
     strategy_code = load_strategy_code(strategy_info['file_path'])
-    
+
     if not strategy_code:
         print("❌ Impossibile caricare il codice")
         return
-    
+
     # Inizializza ottimizzatore
     optimizer = OptimizerAgent()
-    
+
     # Simula risultati
     backtest_results = simulate_backtest_results()
-    
+
     # Testa analisi
     print(f"📊 Analizzando: {strategy_name}")
     analysis = optimizer._analyze_strategy_performance(strategy_code, backtest_results)
-    
+
     print("\n📈 RISULTATI ANALISI:")
     print(f"  - Total Return: {analysis['total_return']:.4f}")
     print(f"  - Sharpe Ratio: {analysis['sharpe_ratio']:.4f}")
     print(f"  - Max Drawdown: {analysis['max_drawdown']:.4f}")
     print(f"  - Win Rate: {analysis['win_rate']:.4f}")
     print(f"  - Total Trades: {analysis['total_trades']}")
-    
+
     print("\n🚨 PROBLEMI IDENTIFICATI:")
     for issue in analysis.get('issues', []):
         print(f"  - {issue}")
-    
+
     print("\n💡 OPPORTUNITÀ DI OTTIMIZZAZIONE:")
     for opportunity in analysis.get('optimization_opportunities', []):
         print(f"  - {opportunity}")
-    
+
     print("\n🔧 INDICATORI UTILIZZATI:")
     for indicator in analysis.get('indicators_used', []):
         print(f"  - {indicator}")
-    
+
     print("\n📝 CONDIZIONI DI ENTRATA:")
     print(f"  - Numero: {len(analysis.get('entry_conditions', []))}")
-    
+
     print("\n📝 CONDIZIONI DI USCITA:")
     print(f"  - Numero: {len(analysis.get('exit_conditions', []))}")
 
@@ -193,41 +193,41 @@ def test_optimization_suggestions():
     """Testa la generazione di suggerimenti di ottimizzazione."""
     print("💡 TEST SUGGERIMENTI OTTIMIZZAZIONE")
     print("=" * 50)
-    
+
     # Carica strategia
     metadata = load_strategies_metadata()
     if not metadata:
         print("❌ Nessuna strategia trovata")
         return
-    
+
     strategy_name = list(metadata.keys())[0]
     strategy_info = metadata[strategy_name]
     strategy_code = load_strategy_code(strategy_info['file_path'])
-    
+
     if not strategy_code:
         print("❌ Impossibile caricare il codice")
         return
-    
+
     # Inizializza ottimizzatore
     optimizer = OptimizerAgent()
-    
+
     # Simula risultati
     backtest_results = simulate_backtest_results()
-    
+
     # Analizza strategia
     analysis = optimizer._analyze_strategy_performance(strategy_code, backtest_results)
-    
+
     # Genera suggerimenti
     print("🧠 Generazione suggerimenti di ottimizzazione...")
     try:
         suggestions = optimizer._generate_optimization_suggestions(
             strategy_code, backtest_results, analysis
         )
-        
+
         print(f"✅ Generati {len(suggestions)} suggerimenti:")
         for i, suggestion in enumerate(suggestions, 1):
             print(f"  {i}. {suggestion}")
-            
+
     except Exception as e:
         print(f"❌ Errore nella generazione suggerimenti: {e}")
         # Testa suggerimenti basati su regole
@@ -241,7 +241,7 @@ def main():
     print("🚀 TEST OPTIMIZER AGENT")
     print("=" * 60)
     print()
-    
+
     # Verifica che Ollama sia disponibile
     try:
         import requests
@@ -253,9 +253,9 @@ def main():
     except Exception as e:
         print(f"⚠️ Ollama non disponibile: {e}")
         print("   I test useranno solo suggerimenti basati su regole")
-    
+
     print()
-    
+
     # Menu di test
     while True:
         print("Scegli un test:")
@@ -264,9 +264,9 @@ def main():
         print("3. Test suggerimenti ottimizzazione")
         print("4. Tutti i test")
         print("0. Esci")
-        
+
         choice = input("\nScelta: ").strip()
-        
+
         if choice == "1":
             test_optimizer_with_existing_strategies()
         elif choice == "2":
@@ -283,8 +283,8 @@ def main():
             break
         else:
             print("❌ Scelta non valida")
-        
+
         print("\n" + "="*60 + "\n")
 
 if __name__ == "__main__":
-    main() 
+    main()

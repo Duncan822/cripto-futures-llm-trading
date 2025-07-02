@@ -178,4 +178,4 @@ La strategia deve ADATTARSI a:
    - Diversificazione temporale
 
 Rispondi SOLO con il codice Python della strategia adattiva.
-""" 
+"""

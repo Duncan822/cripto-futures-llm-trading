@@ -16,7 +16,7 @@ def regenerate_strategies():
     """
     print("🚀 Rigenerazione strategie con parametri migliorati")
     print("=" * 60)
-    
+
     # Carica le strategie esistenti
     try:
         with open('strategies_metadata.json', 'r') as f:
@@ -24,13 +24,13 @@ def regenerate_strategies():
     except FileNotFoundError:
         print("❌ File strategies_metadata.json non trovato")
         return
-    
+
     print(f"📊 Trovate {len(strategies)} strategie da rigenerare")
-    
+
     # Backup delle strategie esistenti
     backup_dir = f"strategies_backup_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
     os.makedirs(backup_dir, exist_ok=True)
-    
+
     # Sposta le strategie esistenti nel backup
     strategies_dir = "user_data/strategies"
     if os.path.exists(strategies_dir):
@@ -40,12 +40,12 @@ def regenerate_strategies():
                 dst = os.path.join(backup_dir, file)
                 shutil.move(src, dst)
                 print(f"  📦 Backup: {file}")
-    
+
     # Genera nuove strategie con parametri migliorati
     from agents.generator import GeneratorAgent
-    
+
     generator = GeneratorAgent()
-    
+
     # Parametri migliorati per ogni tipo di strategia
     improved_params = {
         "scalping": {
@@ -105,11 +105,11 @@ def regenerate_strategies():
             "indicators": ["BBANDS", "SUPPORT_RESISTANCE", "VOLUME", "RSI", "EMA"]
         }
     }
-    
+
     # Genera nuove strategie per ogni tipo
     for strategy_type, params in improved_params.items():
         print(f"\n🔧 Generazione strategia {strategy_type.upper()}")
-        
+
         # Genera 2-3 strategie per tipo con parametri leggermente diversi
         for i in range(3):
             # Varia leggermente i parametri
@@ -119,7 +119,7 @@ def regenerate_strategies():
                 for k, v in params["roi"].items()
             }
             modified_params["stoploss"] = params["stoploss"] * (1 + (i - 1) * 0.1)
-            
+
             try:
                 strategy_name = f"{strategy_type.capitalize()}Strategy_improved_v{i+1}"
                 generator.generate_futures_strategy(
@@ -129,15 +129,15 @@ def regenerate_strategies():
                 print(f"  ✅ Generata: {strategy_name}")
             except Exception as e:
                 print(f"  ❌ Errore generazione {strategy_type}: {e}")
-    
+
     # Aggiorna i metadati
     print(f"\n📝 Aggiornamento metadati...")
-    
+
     # Rimuovi le strategie vecchie dai metadati
     old_strategies = list(strategies.keys())
     for strategy_name in old_strategies:
         del strategies[strategy_name]
-    
+
     # Aggiungi le nuove strategie
     new_strategies = []
     for file in os.listdir(strategies_dir):
@@ -153,7 +153,7 @@ def regenerate_strategies():
                 "optimization_status": "pending",
                 "improvements": [
                     "ROI più conservativo",
-                    "Stop loss più ampio", 
+                    "Stop loss più ampio",
                     "Timeframe più lungo",
                     "Più indicatori tecnici",
                     "Filtri di trend",
@@ -161,23 +161,23 @@ def regenerate_strategies():
                 ]
             }
             new_strategies.append(strategy_name)
-    
+
     # Salva i metadati aggiornati
     with open('strategies_metadata.json', 'w') as f:
         json.dump(strategies, f, indent=2)
-    
+
     print(f"✅ Rigenerate {len(new_strategies)} strategie migliorate")
     print(f"📦 Backup delle strategie vecchie in: {backup_dir}")
-    
+
     # Mostra le nuove strategie
     print(f"\n📋 Nuove strategie generate:")
     for strategy in new_strategies:
         print(f"  • {strategy}")
-    
+
     print(f"\n💡 Prossimi passi:")
     print(f"   1. Testa le nuove strategie: ./manage_background_agent.sh backtest")
     print(f"   2. Ottimizza le migliori: ./manage_background_agent.sh optimize")
     print(f"   3. Monitora i risultati: ./manage_background_agent.sh status")
 
 if __name__ == "__main__":
-    regenerate_strategies() 
+    regenerate_strategies()

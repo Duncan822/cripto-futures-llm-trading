@@ -33,7 +33,7 @@ def test_config_files():
         "user_data/config.json",
         "user_data/hyperopt_config.json"
     ]
-    
+
     all_exist = True
     for config_file in config_files:
         if os.path.exists(config_file):
@@ -41,19 +41,19 @@ def test_config_files():
         else:
             logger.error(f"❌ {config_file} mancante")
             all_exist = False
-    
+
     return all_exist
 
 def test_strategy_directory():
     """Testa se la directory delle strategie esiste e ha strategie."""
     strategies_dir = "user_data/strategies"
-    
+
     if not os.path.exists(strategies_dir):
         logger.error(f"❌ Directory {strategies_dir} non trovata")
         return False
-    
+
     strategies = [f for f in os.listdir(strategies_dir) if f.endswith('.py') and not f.startswith('__')]
-    
+
     if strategies:
         logger.info(f"✅ Trovate {len(strategies)} strategie: {strategies}")
         return True
@@ -64,18 +64,18 @@ def test_strategy_directory():
 def test_data_directory():
     """Testa se ci sono dati storici disponibili."""
     data_dir = "user_data/data"
-    
+
     if not os.path.exists(data_dir):
         logger.error(f"❌ Directory {data_dir} non trovata")
         return False
-    
+
     # Cerca file di dati
     data_files = []
     for root, dirs, files in os.walk(data_dir):
         for file in files:
             if file.endswith('.json'):
                 data_files.append(os.path.join(root, file))
-    
+
     if data_files:
         logger.info(f"✅ Trovati {len(data_files)} file di dati")
         return True
@@ -87,22 +87,22 @@ def test_backtest_command():
     """Testa se il comando backtest funziona."""
     try:
         import subprocess
-        
+
         # Cerca una strategia da testare
         strategies_dir = "user_data/strategies"
         if not os.path.exists(strategies_dir):
             logger.error("❌ Directory strategie non trovata")
             return False
-        
+
         strategies = [f[:-3] for f in os.listdir(strategies_dir) if f.endswith('.py') and not f.startswith('__')]
-        
+
         if not strategies:
             logger.error("❌ Nessuna strategia trovata per il test")
             return False
-        
+
         strategy_name = strategies[0]
         logger.info(f"🧪 Testando backtest con strategia: {strategy_name}")
-        
+
         # Esegui backtest di test (solo validazione)
         cmd = [
             "freqtrade", "backtesting",
@@ -110,16 +110,16 @@ def test_backtest_command():
             "--strategy", strategy_name,
             "--timerange", "20240101-20240102"  # Solo 1 giorno per test veloce
         ]
-        
+
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=60)
-        
+
         if result.returncode == 0:
             logger.info("✅ Comando backtest funziona")
             return True
         else:
             logger.error(f"❌ Errore nel comando backtest: {result.stderr}")
             return False
-            
+
     except subprocess.TimeoutExpired:
         logger.error("❌ Timeout nel comando backtest")
         return False
@@ -131,22 +131,22 @@ def test_hyperopt_command():
     """Testa se il comando hyperopt funziona."""
     try:
         import subprocess
-        
+
         # Cerca una strategia da testare
         strategies_dir = "user_data/strategies"
         if not os.path.exists(strategies_dir):
             logger.error("❌ Directory strategie non trovata")
             return False
-        
+
         strategies = [f[:-3] for f in os.listdir(strategies_dir) if f.endswith('.py') and not f.startswith('__')]
-        
+
         if not strategies:
             logger.error("❌ Nessuna strategia trovata per il test")
             return False
-        
+
         strategy_name = strategies[0]
         logger.info(f"🧪 Testando hyperopt con strategia: {strategy_name}")
-        
+
         # Esegui hyperopt di test (solo 1 epoch per test veloce)
         cmd = [
             "freqtrade", "hyperopt",
@@ -156,16 +156,16 @@ def test_hyperopt_command():
             "--timerange", "20240101-20240102",  # Solo 1 giorno per test veloce
             "--spaces", "buy"
         ]
-        
+
         result = subprocess.run(cmd, capture_output=True, text=True, timeout=120)
-        
+
         if result.returncode == 0:
             logger.info("✅ Comando hyperopt funziona")
             return True
         else:
             logger.error(f"❌ Errore nel comando hyperopt: {result.stderr}")
             return False
-            
+
     except subprocess.TimeoutExpired:
         logger.error("❌ Timeout nel comando hyperopt")
         return False
@@ -176,7 +176,7 @@ def test_hyperopt_command():
 def main():
     """Esegue tutti i test."""
     logger.info("🧪 Iniziando test del sistema Freqtrade...")
-    
+
     tests = [
         ("Installazione Freqtrade", test_freqtrade_installation),
         ("File di configurazione", test_config_files),
@@ -185,7 +185,7 @@ def main():
         ("Comando backtest", test_backtest_command),
         ("Comando hyperopt", test_hyperopt_command)
     ]
-    
+
     results = []
     for test_name, test_func in tests:
         logger.info(f"\n--- Test: {test_name} ---")
@@ -195,23 +195,23 @@ def main():
         except Exception as e:
             logger.error(f"❌ Errore nel test {test_name}: {e}")
             results.append((test_name, False))
-    
+
     # Report finale
     logger.info("\n" + "="*50)
     logger.info("📊 REPORT FINALE TEST")
     logger.info("="*50)
-    
+
     passed = 0
     total = len(results)
-    
+
     for test_name, result in results:
         status = "✅ PASS" if result else "❌ FAIL"
         logger.info(f"{status} - {test_name}")
         if result:
             passed += 1
-    
+
     logger.info(f"\nRisultato: {passed}/{total} test passati")
-    
+
     if passed == total:
         logger.info("🎉 Tutti i test sono passati! Il sistema è pronto per backtest e hyperopt.")
         return True
@@ -221,4 +221,4 @@ def main():
 
 if __name__ == "__main__":
     success = main()
-    sys.exit(0 if success else 1) 
+    sys.exit(0 if success else 1)

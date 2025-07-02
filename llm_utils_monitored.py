@@ -16,21 +16,21 @@ def query_ollama_monitored(prompt: str, model: str = "mistral", timeout: int = 1
     Traccia automaticamente la richiesta nel monitor.
     """
     request_id = str(uuid.uuid4())
-    
+
     try:
         # Traccia l'inizio della richiesta
         track_llm_request(request_id, model, prompt, timeout)
-        
+
         # Esegui la richiesta originale
         start_time = time.time()
         response = query_ollama(prompt, model, timeout)
         duration = time.time() - start_time
-        
+
         # Aggiorna lo stato con successo
         update_llm_request(request_id, "completed", response)
-        
+
         return response
-        
+
     except Exception as e:
         # Aggiorna lo stato con errore
         update_llm_request(request_id, "failed", error=str(e))
@@ -42,21 +42,21 @@ def query_ollama_fast_monitored(prompt: str, model: str = "phi3", timeout: int =
     Traccia automaticamente la richiesta nel monitor.
     """
     request_id = str(uuid.uuid4())
-    
+
     try:
         # Traccia l'inizio della richiesta
         track_llm_request(request_id, model, prompt, timeout)
-        
+
         # Esegui la richiesta originale
         start_time = time.time()
         response = query_ollama_fast(prompt, model, timeout)
         duration = time.time() - start_time
-        
+
         # Aggiorna lo stato con successo
         update_llm_request(request_id, "completed", response)
-        
+
         return response
-        
+
     except Exception as e:
         # Aggiorna lo stato con errore
         update_llm_request(request_id, "failed", error=str(e))
@@ -68,21 +68,21 @@ def query_ollama_with_timeout_monitoring(prompt: str, model: str = "mistral", ti
     Traccia anche i timeout come errori specifici.
     """
     request_id = str(uuid.uuid4())
-    
+
     try:
         # Traccia l'inizio della richiesta
         track_llm_request(request_id, model, prompt, timeout)
-        
+
         # Esegui la richiesta con gestione timeout
         start_time = time.time()
         response = query_ollama(prompt, model, timeout)
         duration = time.time() - start_time
-        
+
         # Aggiorna lo stato con successo
         update_llm_request(request_id, "completed", response)
-        
+
         return response
-        
+
     except Exception as e:
         error_type = "timeout" if "timeout" in str(e).lower() else "failed"
         update_llm_request(request_id, error_type, error=str(e))
@@ -130,12 +130,12 @@ def stop_llm_monitoring():
 def test_monitored_llm():
     """Test rapido del sistema di monitoraggio."""
     print("🧪 Test del sistema di monitoraggio LLM...")
-    
+
     try:
         # Avvia il monitor
         monitor = start_llm_monitoring(port=8081)
         print("✅ Monitor avviato su porta 8081")
-        
+
         # Test di una richiesta
         print("📝 Test richiesta monitorata...")
         response = query_ollama_fast_monitored(
@@ -144,20 +144,20 @@ def test_monitored_llm():
             timeout=30
         )
         print(f"✅ Risposta: {response}")
-        
+
         # Mostra stato
         status = get_monitor_status()
         print(f"📊 Stato monitor: {status}")
-        
+
         # Mostra richieste attive
         active = get_active_requests()
         print(f"⚡ Richieste attive: {len(active)}")
-        
+
         return True
-        
+
     except Exception as e:
         print(f"❌ Errore nel test: {e}")
         return False
 
 if __name__ == "__main__":
-    test_monitored_llm() 
+    test_monitored_llm()

@@ -69,24 +69,24 @@ class ImprovedScalpingStrategy(IStrategy):
     trailing_stop_positive = 0.02
     trailing_stop_positive_offset = 0.03
     timeframe = "15m"
-    
+
     # Parametri ottimizzabili
     rsi_oversold = IntParameter(20, 35, default=25)
     rsi_overbought = IntParameter(65, 80, default=75)
-    
+
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         # Tutti gli indicatori obbligatori
         return dataframe
-    
+
     def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         # Logica multipla con TUTTE le condizioni
         return dataframe
-    
+
     def custom_stoploss(self, pair: str, trade: Trade, current_time: datetime,
                        current_rate: float, current_profit: float, **kwargs) -> float:
         # Stop loss dinamico
         return self.stoploss
-    
+
     def confirm_trade_entry(self, pair: str, order_type: str, amount: float, rate: float,
                            time_in_force: str, current_time: datetime, entry_tag: Optional[str],
                            side: str, **kwargs) -> bool:
@@ -289,4 +289,4 @@ REQUISITI OBBLIGATORI:
    - Filtri per transizioni di mercato
 
 Rispondi SOLO con il codice Python completo.
-""" 
+"""

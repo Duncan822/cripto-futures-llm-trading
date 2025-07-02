@@ -5,14 +5,14 @@ def query_ollama(prompt: str, model: str = "mistral", timeout: int = 1800) -> st
     """
     Invia un prompt all'istanza Ollama locale e restituisce la risposta.
     Ottimizzato per velocità e trading futures.
-    
+
     Args:
         prompt: Il prompt da inviare al modello
         model: Il nome del modello da utilizzare
         timeout: Timeout in secondi (default: 1800 = 30 minuti)
     """
     url = "http://localhost:11434/api/generate"
-    
+
     # Configurazioni ottimizzate per velocità
     payload = {
         "model": model,
@@ -32,7 +32,7 @@ def query_ollama(prompt: str, model: str = "mistral", timeout: int = 1800) -> st
             "rope_freq_scale": 0.5
         }
     }
-    
+
     try:
         print(f"🤖 Invio richiesta a {model} (configurazione veloce)...")
         response = requests.post(url, json=payload, timeout=timeout)
@@ -53,7 +53,7 @@ def query_ollama_fast(prompt: str, model: str = "phi3", timeout: int = 600) -> s
     Usa phi3 che è più veloce per operazioni semplici.
     """
     url = "http://localhost:11434/api/generate"
-    
+
     # Configurazione ultra-veloce
     payload = {
         "model": model,
@@ -68,7 +68,7 @@ def query_ollama_fast(prompt: str, model: str = "phi3", timeout: int = 600) -> s
             "num_batch": 256
         }
     }
-    
+
     try:
         print(f"⚡ Invio richiesta veloce a {model}...")
         response = requests.post(url, json=payload, timeout=timeout)
@@ -83,10 +83,10 @@ def query_ollama_fast(prompt: str, model: str = "phi3", timeout: int = 600) -> s
 def test_model_availability(model: str = "mistral") -> bool:
     """
     Testa se un modello è disponibile e risponde.
-    
+
     Args:
         model: Il nome del modello da testare
-        
+
     Returns:
         True se il modello è disponibile, False altrimenti
     """
@@ -101,7 +101,7 @@ def test_model_availability(model: str = "mistral") -> bool:
 def get_available_models() -> List[str]:
     """
     Restituisce la lista dei modelli disponibili.
-    
+
     Returns:
         Lista dei nomi dei modelli disponibili
     """
@@ -117,7 +117,7 @@ def get_available_models() -> List[str]:
 def get_model_speed_ranking() -> List[str]:
     """
     Restituisce i modelli ordinati per velocità (dal più veloce al più lento).
-    
+
     Returns:
         Lista ordinata dei modelli per velocità
     """
@@ -150,29 +150,29 @@ def get_model_timeout_config() -> Dict[str, Dict[str, int]]:
 def get_optimal_timeout(model: str, prompt_complexity: str = "normal") -> int:
     """
     Calcola il timeout ottimale basato sul modello e sulla complessità del prompt.
-    
+
     Args:
         model: Nome del modello LLM
         prompt_complexity: Complessità del prompt ("fast", "normal", "complex")
-        
+
     Returns:
         Timeout in secondi
     """
     config = get_model_timeout_config()
-    
+
     # Default per modelli sconosciuti
     if model not in config:
         return 1800  # 30 minuti di default
-    
+
     return config[model].get(prompt_complexity, config[model]["normal"])
 
 def estimate_prompt_complexity(prompt: str) -> str:
     """
     Stima la complessità di un prompt basandosi su vari fattori.
-    
+
     Args:
         prompt: Il prompt da analizzare
-        
+
     Returns:
         Complessità stimata ("fast", "normal", "complex")
     """
@@ -180,10 +180,10 @@ def estimate_prompt_complexity(prompt: str) -> str:
     length = len(prompt)
     has_code = "def " in prompt or "class " in prompt or "import " in prompt
     has_instructions = prompt.count("Includi") + prompt.count("Genera") + prompt.count("Crea")
-    
+
     if length < 200 and not has_code and has_instructions < 2:
         return "fast"
     elif length < 800 and has_instructions < 5:
         return "normal"
     else:
-        return "complex" 
+        return "complex"

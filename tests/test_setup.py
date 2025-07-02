@@ -13,26 +13,26 @@ from pathlib import Path
 def test_environment():
     """Test dell'ambiente Python e dipendenze."""
     print("🔍 Test ambiente Python...")
-    
+
     # Verifica Python version
     python_version = sys.version_info
     if python_version.major < 3 or (python_version.major == 3 and python_version.minor < 9):
         print("❌ Python 3.9+ richiesto")
         return False
     print(f"✅ Python {python_version.major}.{python_version.minor}.{python_version.micro}")
-    
+
     # Verifica ambiente virtuale
     if hasattr(sys, 'real_prefix') or (hasattr(sys, 'base_prefix') and sys.base_prefix != sys.prefix):
         print("✅ Ambiente virtuale attivo")
     else:
         print("⚠️ Ambiente virtuale non rilevato (opzionale)")
-    
+
     return True
 
 def test_dependencies():
     """Test delle dipendenze installate."""
     print("\n🔍 Test dipendenze...")
-    
+
     required_packages = [
         'freqtrade',
         'pandas',
@@ -40,7 +40,7 @@ def test_dependencies():
         'ccxt',
         'requests'
     ]
-    
+
     missing_packages = []
     for package in required_packages:
         try:
@@ -49,20 +49,20 @@ def test_dependencies():
         except ImportError:
             print(f"❌ {package} mancante")
             missing_packages.append(package)
-    
+
     if missing_packages:
         print(f"\n⚠️ Pacchetti mancanti: {', '.join(missing_packages)}")
         print("Esegui: pip install -r requirements.txt")
         return False
-    
+
     return True
 
 def test_freqtrade_installation():
     """Test dell'installazione Freqtrade."""
     print("\n🔍 Test installazione Freqtrade...")
-    
+
     try:
-        result = subprocess.run(['freqtrade', '--version'], 
+        result = subprocess.run(['freqtrade', '--version'],
                               capture_output=True, text=True, timeout=10)
         if result.returncode == 0:
             print(f"✅ Freqtrade installato: {result.stdout.strip()}")
@@ -80,12 +80,12 @@ def test_freqtrade_installation():
 def test_configuration_files():
     """Test dei file di configurazione."""
     print("\n🔍 Test file di configurazione...")
-    
+
     config_files = [
         'user_data/config.json',
         'user_data/strategies/LLMStrategy.py'
     ]
-    
+
     all_exist = True
     for config_file in config_files:
         if os.path.exists(config_file):
@@ -93,19 +93,19 @@ def test_configuration_files():
         else:
             print(f"❌ {config_file} mancante")
             all_exist = False
-    
+
     return all_exist
 
 def test_freqtrade_config():
     """Test della configurazione Freqtrade."""
     print("\n🔍 Test configurazione Freqtrade...")
-    
+
     try:
         result = subprocess.run([
-            'freqtrade', 'show-config', 
+            'freqtrade', 'show-config',
             '--config', 'user_data/config.json'
         ], capture_output=True, text=True, timeout=30)
-        
+
         if result.returncode == 0:
             print("✅ Configurazione Freqtrade valida")
             return True
@@ -119,14 +119,14 @@ def test_freqtrade_config():
 def test_strategy_validation():
     """Test della validazione strategia."""
     print("\n🔍 Test validazione strategia...")
-    
+
     try:
         result = subprocess.run([
             'freqtrade', 'show-config',
             '--config', 'user_data/config.json',
             '--strategy', 'LLMStrategy'
         ], capture_output=True, text=True, timeout=30)
-        
+
         if result.returncode == 0:
             print("✅ Strategia LLMStrategy valida")
             return True
@@ -140,7 +140,7 @@ def test_strategy_validation():
 def test_directory_structure():
     """Test della struttura directory."""
     print("\n🔍 Test struttura directory...")
-    
+
     required_dirs = [
         'user_data',
         'user_data/strategies',
@@ -149,7 +149,7 @@ def test_directory_structure():
         'user_data/backtest_results',
         'user_data/hyperopt_results'
     ]
-    
+
     all_exist = True
     for directory in required_dirs:
         if os.path.exists(directory):
@@ -157,15 +157,15 @@ def test_directory_structure():
         else:
             print(f"❌ {directory}/ mancante")
             all_exist = False
-    
+
     return all_exist
 
 def test_ollama():
     """Test di Ollama (opzionale)."""
     print("\n🔍 Test Ollama...")
-    
+
     try:
-        result = subprocess.run(['ollama', 'list'], 
+        result = subprocess.run(['ollama', 'list'],
                               capture_output=True, text=True, timeout=10)
         if result.returncode == 0:
             print("✅ Ollama disponibile")
@@ -175,19 +175,19 @@ def test_ollama():
                 if line.strip():
                     model_name = line.split()[0]
                     available_models.append(model_name)
-            
+
             print(f"📋 Modelli disponibili: {', '.join(available_models) if available_models else 'Nessuno'}")
-            
+
             # Check for required models
             required_models = ['mistral', 'llama2', 'phi3']
             missing_models = [model for model in required_models if model not in available_models]
-            
+
             if missing_models:
                 print(f"⚠️ Modelli mancanti: {', '.join(missing_models)}")
                 print("Esegui: ollama pull <model_name>")
             else:
                 print("✅ Tutti i modelli richiesti disponibili")
-            
+
             return True
         else:
             print("❌ Ollama non risponde correttamente")
@@ -202,20 +202,20 @@ def test_ollama():
 def test_imports():
     """Test degli import Python."""
     print("\n🔍 Test import Python...")
-    
+
     try:
         from freqtrade_utils import FreqtradeManager
         print("✅ freqtrade_utils importato")
-        
+
         from agents.generator import GeneratorAgent
         print("✅ agents.generator importato")
-        
+
         from agents.reviewer import ReviewerAgent
         print("✅ agents.reviewer importato")
-        
+
         from agents.optimizer import OptimizerAgent
         print("✅ agents.optimizer importato")
-        
+
         return True
     except ImportError as e:
         print(f"❌ Errore import: {e}")
@@ -225,7 +225,7 @@ def main():
     """Funzione principale di test."""
     print("🚀 Test Setup Crypto Futures LLM Trading")
     print("=" * 50)
-    
+
     tests = [
         ("Ambiente Python", test_environment),
         ("Dipendenze", test_dependencies),
@@ -237,20 +237,20 @@ def main():
         ("Ollama", test_ollama),
         ("Import Python", test_imports)
     ]
-    
+
     passed = 0
     total = len(tests)
-    
+
     for test_name, test_func in tests:
         try:
             if test_func():
                 passed += 1
         except Exception as e:
             print(f"❌ Errore in {test_name}: {e}")
-    
+
     print("\n" + "=" * 50)
     print(f"📊 Risultati: {passed}/{total} test superati")
-    
+
     if passed == total:
         print("🎉 Setup completato con successo!")
         print("\nProssimi passi:")
@@ -263,9 +263,9 @@ def main():
         print("1. Esegui: ./setup_freqtrade.sh")
         print("2. Verifica che Ollama sia installato")
         print("3. Controlla le dipendenze Python")
-    
+
     return passed == total
 
 if __name__ == "__main__":
     success = main()
-    sys.exit(0 if success else 1) 
+    sys.exit(0 if success else 1)
