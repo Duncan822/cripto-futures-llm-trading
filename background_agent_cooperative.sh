@@ -23,6 +23,13 @@ LLM_STRATEGY_GENERATORS=("cogito:8b" "mistral:7b" "phi3:14b" "llama3.1:8b")
 LLM_VALIDATORS=("cogito:8b" "mistral:7b")
 LLM_OPTIMIZERS=("cogito:8b" "llama3.1:8b")
 
+# Configurazione hardware
+MAX_CPU_USAGE=70          # Massimo utilizzo CPU per operazioni cooperative (%)
+MAX_TEMPERATURE=75        # Temperatura massima CPU (°C)
+MIN_FREE_MEMORY=2         # Memoria minima libera richiesta (GB)
+MAX_PARALLEL_LLMS=4       # Massimo LLM paralleli (adattabile dinamicamente)
+HARDWARE_CHECK_INTERVAL=30 # Intervallo controllo hardware (secondi)
+
 show_help() {
     echo -e "${BLUE}🤖 Background Agent Cooperativo - Generazione Strategie Multi-LLM${NC}"
     echo ""
@@ -48,6 +55,197 @@ show_help() {
     echo "  $0 llm-contest scalping"
     echo "  $0 consensus-strategy momentum"
     echo "  $0 start"
+}
+
+# ===== FUNZIONI DI CONTROLLO HARDWARE =====
+
+get_cpu_usage() {
+    # Ottiene l'utilizzo CPU totale
+    top -bn1 | grep "Cpu(s)" | awk '{print $2}' | sed 's/%us,//' | sed 's/,//' || echo "0"
+}
+
+get_cpu_temperature() {
+    # Ottiene la temperatura CPU
+    if command -v sensors > /dev/null; then
+        sensors | grep -E "(Package|Core|temp1)" | head -1 | awk '{print $2}' | sed 's/+//' | sed 's/°C//' || echo "0"
+    else
+        echo "0"
+    fi
+}
+
+get_free_memory_gb() {
+    # Ottiene la memoria libera in GB
+    free -g | grep "Mem:" | awk '{print $7}' || echo "0"
+}
+
+get_system_load() {
+    # Ottiene il carico del sistema (load average 1 min)
+    uptime | awk -F'load average:' '{print $2}' | awk '{print $1}' | sed 's/,//' || echo "0"
+}
+
+check_hardware_resources() {
+    echo -e "${BLUE}🔍 Controllo risorse hardware...${NC}"
+    
+    local cpu_usage=$(get_cpu_usage)
+    local cpu_temp=$(get_cpu_temperature)
+    local free_mem=$(get_free_memory_gb)
+    local load_avg=$(get_system_load)
+    
+    echo -e "   💻 CPU: ${cpu_usage}% - 🌡️ Temp: ${cpu_temp}°C"
+    echo -e "   💾 RAM libera: ${free_mem}GB - ⚖️ Load: ${load_avg}"
+    
+    # Verifica limiti di sicurezza
+    local hardware_ok=true
+    local warnings=()
+    
+    # Controllo CPU
+    if (( $(echo "$cpu_usage > $MAX_CPU_USAGE" | bc -l 2>/dev/null || echo "0") )); then
+        hardware_ok=false
+        warnings+=("🚨 CPU troppo utilizzata: ${cpu_usage}% > ${MAX_CPU_USAGE}%")
+    fi
+    
+    # Controllo temperatura
+    if [[ "$cpu_temp" != "0" ]] && (( $(echo "$cpu_temp > $MAX_TEMPERATURE" | bc -l 2>/dev/null || echo "0") )); then
+        hardware_ok=false
+        warnings+=("🔥 Temperatura troppo alta: ${cpu_temp}°C > ${MAX_TEMPERATURE}°C")
+    fi
+    
+    # Controllo memoria
+    if (( free_mem < MIN_FREE_MEMORY )); then
+        hardware_ok=false
+        warnings+=("💾 Memoria insufficiente: ${free_mem}GB < ${MIN_FREE_MEMORY}GB")
+    fi
+    
+    # Controllo carico sistema
+    if (( $(echo "$load_avg > 8.0" | bc -l 2>/dev/null || echo "0") )); then
+        hardware_ok=false
+        warnings+=("⚖️ Sistema sovraccarico: load ${load_avg}")
+    fi
+    
+    if [ "$hardware_ok" = true ]; then
+        echo -e "${GREEN}✅ Risorse hardware OK${NC}"
+        return 0
+    else
+        echo -e "${RED}❌ Risorse hardware insufficienti:${NC}"
+        for warning in "${warnings[@]}"; do
+            echo -e "   $warning"
+        done
+        return 1
+    fi
+}
+
+calculate_optimal_parallel_llms() {
+    local cpu_usage=$(get_cpu_usage)
+    local free_mem=$(get_free_memory_gb)
+    local load_avg=$(get_system_load)
+    
+    # Calcolo dinamico del numero ottimale di LLM paralleli
+    local optimal_llms=$MAX_PARALLEL_LLMS
+    
+    # Riduci in base al carico CPU
+    if (( $(echo "$cpu_usage > 50" | bc -l 2>/dev/null || echo "0") )); then
+        optimal_llms=$((optimal_llms - 1))
+    fi
+    if (( $(echo "$cpu_usage > 60" | bc -l 2>/dev/null || echo "0") )); then
+        optimal_llms=$((optimal_llms - 1))
+    fi
+    
+    # Riduci in base alla memoria
+    if (( free_mem < 4 )); then
+        optimal_llms=$((optimal_llms - 1))
+    fi
+    if (( free_mem < 3 )); then
+        optimal_llms=$((optimal_llms - 1))
+    fi
+    
+    # Riduci in base al load average
+    if (( $(echo "$load_avg > 4.0" | bc -l 2>/dev/null || echo "0") )); then
+        optimal_llms=$((optimal_llms - 1))
+    fi
+    
+    # Minimo 1 LLM
+    if (( optimal_llms < 1 )); then
+        optimal_llms=1
+    fi
+    
+    echo $optimal_llms
+}
+
+monitor_hardware_during_execution() {
+    local operation_name="$1"
+    local max_duration=${2:-1800}  # Default 30 minuti
+    
+    echo -e "${YELLOW}🔍 Monitoraggio hardware durante: $operation_name${NC}"
+    
+    local start_time=$(date +%s)
+    local warning_count=0
+    
+    while true; do
+        local current_time=$(date +%s)
+        local elapsed=$((current_time - start_time))
+        
+        # Timeout operazione
+        if (( elapsed > max_duration )); then
+            echo -e "${RED}⏰ Timeout operazione: ${operation_name} (${elapsed}s)${NC}"
+            return 2
+        fi
+        
+        # Controllo risorse
+        local cpu_usage=$(get_cpu_usage)
+        local cpu_temp=$(get_cpu_temperature)
+        local free_mem=$(get_free_memory_gb)
+        
+        # Controlli critici
+        local critical_issue=false
+        
+        if (( $(echo "$cpu_usage > 90" | bc -l 2>/dev/null || echo "0") )); then
+            echo -e "${RED}🚨 CPU critica: ${cpu_usage}%${NC}"
+            critical_issue=true
+        fi
+        
+        if [[ "$cpu_temp" != "0" ]] && (( $(echo "$cpu_temp > 85" | bc -l 2>/dev/null || echo "0") )); then
+            echo -e "${RED}🔥 Temperatura critica: ${cpu_temp}°C${NC}"
+            critical_issue=true
+        fi
+        
+        if (( free_mem < 1 )); then
+            echo -e "${RED}💾 Memoria critica: ${free_mem}GB${NC}"
+            critical_issue=true
+        fi
+        
+        if [ "$critical_issue" = true ]; then
+            ((warning_count++))
+            if (( warning_count >= 3 )); then
+                echo -e "${RED}🛑 Interruzione operazione per sicurezza sistema${NC}"
+                return 1
+            fi
+        else
+            warning_count=0
+        fi
+        
+        sleep $HARDWARE_CHECK_INTERVAL
+    done
+}
+
+get_hardware_optimized_models() {
+    local cpu_usage=$(get_cpu_usage)
+    local free_mem=$(get_free_memory_gb)
+    
+    # Selezione modelli ottimizzata per hardware
+    local optimized_models=()
+    
+    if (( free_mem >= 8 && $(echo "$cpu_usage < 40" | bc -l 2>/dev/null || echo "0") )); then
+        # Sistema potente: usa tutti i modelli
+        optimized_models=("${LLM_STRATEGY_GENERATORS[@]}")
+    elif (( free_mem >= 4 && $(echo "$cpu_usage < 60" | bc -l 2>/dev/null || echo "0") )); then
+        # Sistema medio: usa modelli efficienti
+        optimized_models=("phi3:14b" "mistral:7b" "cogito:8b")
+    else
+        # Sistema limitato: usa solo modelli veloci
+        optimized_models=("phi3:14b" "mistral:7b")
+    fi
+    
+    echo "${optimized_models[@]}"
 }
 
 check_pid() {
