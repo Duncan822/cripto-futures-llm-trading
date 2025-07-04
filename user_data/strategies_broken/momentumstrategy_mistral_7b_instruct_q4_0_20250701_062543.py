@@ -1,5 +1,8 @@
 
-class VolatilityStrategy_mistral:7b-instruct-q4_0_20250701_004147(IStrategy):
+from freqtrade.strategy import IStrategy
+import talib.abstract as ta
+from pandas import DataFrame
+class MomentumStrategy_mistral_7b-instruct-q4_0_20250701_062543(IStrategy):
 minimal_roi = {"0": 0.05}
 stoploss = -0.02
 timeframe = "5m"

@@ -10,6 +10,7 @@ from datetime import datetime
 from typing import Dict, List, Any, Optional
 from .strategy_text_generator import StrategyTextGenerator
 from .freqtrade_code_converter import FreqTradeCodeConverter
+from .strategy_postprocess import postprocess_strategy
 
 class TwoStageGenerator:
     def __init__(self, 
@@ -163,7 +164,17 @@ class TwoStageGenerator:
             f.write(f"Approccio: Two-stage generation\n\n")
             f.write(description)
         
-        print(f"💾 Strategia salvata: {file_path}")
+        # Post-processing automatico: valida e correggi la strategia
+        print("🔧 Post-processing automatico della strategia...")
+        is_valid = postprocess_strategy(file_path)
+        
+        if is_valid:
+            print(f"✅ Strategia validata e salvata: {file_path}")
+        else:
+            print(f"❌ Strategia non valida, spostata in strategies_broken")
+            # Se non valida, il file è già stato spostato da postprocess_strategy
+            return ""
+        
         return file_path
     
     def validate_strategy(self, strategy_name: str) -> Dict[str, Any]:

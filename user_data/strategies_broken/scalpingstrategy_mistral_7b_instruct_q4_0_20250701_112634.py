@@ -1,5 +1,8 @@
 
-class VolatilityStrategy_cogito:8b_20250630_223230(IStrategy):
+from freqtrade.strategy import IStrategy
+import talib.abstract as ta
+from pandas import DataFrame
+class ScalpingStrategy_mistral_7b-instruct-q4_0_20250701_112634(IStrategy):
 minimal_roi = {"0": 0.05}
 stoploss = -0.02
 timeframe = "5m"

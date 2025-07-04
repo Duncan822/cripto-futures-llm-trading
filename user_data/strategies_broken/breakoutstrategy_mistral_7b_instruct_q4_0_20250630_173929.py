@@ -1,5 +1,8 @@
 
-class BreakoutStrategy_phi3:mini_20250630_202331(IStrategy):
+from freqtrade.strategy import IStrategy
+import talib.abstract as ta
+from pandas import DataFrame
+class BreakoutStrategy_mistral_7b-instruct-q4_0_20250630_173929(IStrategy):
 minimal_roi = {"0": 0.05}
 stoploss = -0.02
 timeframe = "5m"

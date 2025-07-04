@@ -1,0 +1,43 @@
+REPORT VALIDAZIONE STRATEGIE
+==================================================
+Strategie valide: 8
+Strategie con errori: 13
+Tasso di successo: 38.1%
+
+STRATEGIE VALIDE:
+  - volatilitystrategy_20250704_100639.py
+  - scalpingstrategy_mistral_7b_instruct_q4_0_20250704_092117.py
+  - contest_cogito_8b_scalping.py
+  - testnewsystem.py
+  - ScalpingStrategy_improved_test.py
+  - testtimeoutoptimized.py
+  - volatilitystrategy_cooperative_20250703_184333.py
+  - testllmstrategy.py
+
+STRATEGIE CON ERRORI:
+  - momentumstrategy_cogito_3b_20250701_133543.py: syntax
+    Dettagli: Errore di sintassi alla riga 14: expected an indented block after function definition on line 13
+  - scalpingstrategy_cogito_8b_20250630_132110.py: syntax
+    Dettagli: Errore di sintassi alla riga 14: expected an indented block after function definition on line 13
+  - scalpingstrategy_mistral_7b_instruct_q4_0_20250701_112634.py: syntax
+    Dettagli: Errore di sintassi alla riga 5: invalid syntax
+  - volatilitystrategy_mistral_7b_instruct_q4_0_20250701_004147.py: syntax
+    Dettagli: Errore di sintassi alla riga 5: invalid syntax
+  - breakoutstrategy_phi3_mini_20250630_202331.py: syntax
+    Dettagli: Errore di sintassi alla riga 14: expected an indented block after function definition on line 13
+  - volatilitystrategy_cogito_8b_20250630_223230.py: syntax
+    Dettagli: Errore di sintassi alla riga 14: expected an indented block after function definition on line 13
+  - volatilitystrategy_cogito_3b_20250701_193633.py: syntax
+    Dettagli: Errore di sintassi alla riga 14: expected an indented block after function definition on line 13
+  - momentumstrategy_cogito_3b_20250701_025103.py: syntax
+    Dettagli: Errore di sintassi alla riga 14: expected an indented block after function definition on line 13
+  - breakoutstrategy_mistral_7b_instruct_q4_0_20250630_173929.py: syntax
+    Dettagli: Errore di sintassi alla riga 5: invalid syntax
+  - scalpingstrategy_phi3_mini_20250630_153020.py: syntax
+    Dettagli: Errore di sintassi alla riga 14: expected an indented block after function definition on line 13
+  - volatilitystrategy_mistral_7b_instruct_q4_0_20250701_083435.py: syntax
+    Dettagli: Errore di sintassi alla riga 5: invalid syntax
+  - momentumstrategy_mistral_7b_instruct_q4_0_20250701_062543.py: syntax
+    Dettagli: Errore di sintassi alla riga 5: invalid syntax
+  - volatilitystrategy_mistral_7b_instruct_q4_0_20250701_172715.py: syntax
+    Dettagli: Errore di sintassi alla riga 5: invalid syntax
