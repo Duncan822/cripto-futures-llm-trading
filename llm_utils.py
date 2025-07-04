@@ -47,6 +47,51 @@ def query_ollama(prompt: str, model: str = "mistral", timeout: int = 1800) -> st
         print(f"❌ Errore nella richiesta a {model}: {e}")
         raise
 
+def query_ollama_unlimited(prompt: str, model: str = "mistral") -> str:
+    """
+    Versione senza timeout per cooperazione libera tra LLM.
+    Permette ai modelli di prendersi tutto il tempo necessario per generare strategie complesse.
+    
+    Args:
+        prompt: Il prompt da inviare al modello
+        model: Il nome del modello da utilizzare
+        
+    Returns:
+        Risposta del modello senza limiti di tempo
+    """
+    url = "http://localhost:11434/api/generate"
+    
+    # Configurazione ottimizzata per qualità e cooperazione
+    payload = {
+        "model": model,
+        "prompt": prompt,
+        "stream": False,
+        "options": {
+            "temperature": 0.4,        # Leggermente più alto per creatività
+            "top_p": 0.9,             # Più ampio per varietà
+            "top_k": 50,              # Più scelte disponibili
+            "num_predict": 2048,      # Output più lungo per strategie complete
+            "repeat_penalty": 1.1,    # Evita ripetizioni
+            "num_ctx": 4096,          # Contesto più ampio
+            "num_thread": 8,          # Usa più thread se disponibili
+            "num_gpu": 1,             # Usa GPU se disponibile
+            "num_batch": 512,         # Batch size ottimizzato
+            "rope_freq_base": 10000,  # Parametri ROPE ottimizzati
+            "rope_freq_scale": 0.5
+        }
+    }
+    
+    try:
+        print(f"🤝 Invio richiesta cooperativa a {model} (senza timeout)...")
+        response = requests.post(url, json=payload, timeout=36000)  # 10 ore di timeout
+        response.raise_for_status()
+        result = response.json()
+        print(f"✅ Risposta cooperativa ricevuta da {model}")
+        return result["response"]
+    except requests.exceptions.RequestException as e:
+        print(f"❌ Errore nella richiesta cooperativa a {model}: {e}")
+        raise
+
 def query_ollama_fast(prompt: str, model: str = "phi3", timeout: int = 600) -> str:
     """
     Versione ultra-veloce per prompt semplici e decisioni rapide.
@@ -78,6 +123,53 @@ def query_ollama_fast(prompt: str, model: str = "phi3", timeout: int = 600) -> s
         return result["response"]
     except Exception as e:
         print(f"❌ Errore nella richiesta veloce a {model}: {e}")
+        raise
+
+def query_ollama_cooperative(prompt: str, model: str = "cogito:8b", session_id: str = None) -> str:
+    """
+    Versione specializzata per cooperazione tra LLM.
+    Ottimizzata per generazione di strategie complesse e interazioni cooperative.
+    
+    Args:
+        prompt: Il prompt da inviare al modello
+        model: Il nome del modello da utilizzare (default: cogito:8b per cooperazione)
+        session_id: ID della sessione cooperativa per logging
+        
+    Returns:
+        Risposta del modello ottimizzata per cooperazione
+    """
+    url = "http://localhost:11434/api/generate"
+    
+    # Configurazione ottimizzata per cooperazione
+    payload = {
+        "model": model,
+        "prompt": prompt,
+        "stream": False,
+        "options": {
+            "temperature": 0.5,        # Bilanciato per creatività e coerenza
+            "top_p": 0.85,            # Ampio ma controllato
+            "top_k": 45,              # Buona varietà
+            "num_predict": 3072,      # Output molto lungo per strategie complete
+            "repeat_penalty": 1.15,   # Evita ripetizioni
+            "num_ctx": 8192,          # Contesto molto ampio per cooperazione
+            "num_thread": 8,          # Usa più thread se disponibili
+            "num_gpu": 1,             # Usa GPU se disponibile
+            "num_batch": 1024,        # Batch size maggiore per cooperazione
+            "rope_freq_base": 10000,  # Parametri ROPE ottimizzati
+            "rope_freq_scale": 0.5
+        }
+    }
+    
+    try:
+        session_info = f" (sessione: {session_id})" if session_id else ""
+        print(f"🤝 Invio richiesta cooperativa a {model}{session_info}...")
+        response = requests.post(url, json=payload, timeout=36000)  # 10 ore di timeout per cooperazione
+        response.raise_for_status()
+        result = response.json()
+        print(f"✅ Risposta cooperativa ricevuta da {model}{session_info}")
+        return result["response"]
+    except requests.exceptions.RequestException as e:
+        print(f"❌ Errore nella richiesta cooperativa a {model}: {e}")
         raise
 
 def test_model_availability(model: str = "mistral") -> bool:

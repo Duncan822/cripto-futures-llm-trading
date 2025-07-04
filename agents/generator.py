@@ -42,6 +42,160 @@ class GeneratorAgent:
         else:
             return self._generate_direct_strategy(prompt, model_to_use, timeout, strategy_name)
     
+    def generate_adaptive_strategy(self, 
+                                 strategy_type: str = "volatility",
+                                 model: str | None = None,
+                                 complexity: str = "normal",
+                                 style: str = "technical",
+                                 randomization: float = 0.3,
+                                 use_hybrid: bool = True,
+                                 strategy_name: str = None) -> str:
+        """
+        Genera una strategia usando il sistema di prompt adattivi.
+        
+        Args:
+            strategy_type: Tipo di strategia ("volatility", "scalping", "breakout", "momentum", "adaptive")
+            model: Il modello da utilizzare
+            complexity: Livello di complessità ("simple", "normal", "complex")
+            style: Stile del prompt ("technical", "creative", "conservative", "aggressive")
+            randomization: Livello di randomizzazione (0.0-1.0)
+            use_hybrid: Se True, usa approccio ibrido
+            strategy_name: Nome della classe strategia
+            
+        Returns:
+            Codice della strategia generata
+        """
+        try:
+            from prompts.adaptive_prompt_generator import generate_adaptive_prompt
+            
+            # Genera prompt adattivo
+            adaptive_prompt = generate_adaptive_prompt(
+                strategy_type=strategy_type,
+                model=model or self.default_model,
+                complexity=complexity,
+                style=style,
+                randomization=randomization
+            )
+            
+            print(f"🎯 Generazione strategia {strategy_type} con prompt adattivo:")
+            print(f"   Modello: {model or self.default_model}")
+            print(f"   Complessità: {complexity}")
+            print(f"   Stile: {style}")
+            print(f"   Randomizzazione: {randomization}")
+            print(f"   Lunghezza prompt: {len(adaptive_prompt)} caratteri")
+            
+            # Genera strategia con prompt adattivo
+            return self.generate_strategy(
+                prompt=adaptive_prompt,
+                model=model,
+                timeout=None,  # Calcolato automaticamente
+                use_hybrid=use_hybrid,
+                strategy_name=strategy_name or f"{strategy_type.capitalize()}Strategy"
+            )
+            
+        except ImportError:
+            print("⚠️ Sistema prompt adattivi non disponibile, uso prompt standard")
+            return self.generate_futures_strategy(strategy_type, use_hybrid, strategy_name)
+        except Exception as e:
+            print(f"❌ Errore nella generazione adattiva: {e}")
+            return self.generate_futures_strategy(strategy_type, use_hybrid, strategy_name)
+    
+    def generate_simple_strategy(self, strategy_type: str = "volatility", model: str | None = None, strategy_name: str = None) -> str:
+        """
+        Genera una strategia semplice usando prompt adattivi.
+        """
+        return self.generate_adaptive_strategy(
+            strategy_type=strategy_type,
+            model=model,
+            complexity="simple",
+            style="technical",
+            randomization=0.1,
+            strategy_name=strategy_name
+        )
+    
+    def generate_complex_strategy(self, strategy_type: str = "volatility", model: str | None = None, strategy_name: str = None) -> str:
+        """
+        Genera una strategia complessa usando prompt adattivi.
+        """
+        return self.generate_adaptive_strategy(
+            strategy_type=strategy_type,
+            model=model,
+            complexity="complex",
+            style="technical",
+            randomization=0.2,
+            strategy_name=strategy_name
+        )
+    
+    def generate_random_strategy(self, strategy_type: str = "volatility", model: str | None = None, strategy_name: str = None) -> str:
+        """
+        Genera una strategia con prompt casuale usando prompt adattivi.
+        """
+        return self.generate_adaptive_strategy(
+            strategy_type=strategy_type,
+            model=model,
+            complexity="normal",
+            style="creative",
+            randomization=0.9,
+            strategy_name=strategy_name
+        )
+    
+    def generate_strategy_ensemble(self, strategy_type: str = "volatility", models: list = None, strategy_name: str = None) -> str:
+        """
+        Genera un ensemble di strategie usando diversi prompt adattivi.
+        
+        Args:
+            strategy_type: Tipo di strategia
+            models: Lista di modelli da usare (se None, usa modelli veloci)
+            strategy_name: Nome della classe strategia
+            
+        Returns:
+            Strategia migliore dell'ensemble
+        """
+        if models is None:
+            models = self.fast_models[:3]  # Usa i 3 modelli più veloci
+        
+        print(f"🎭 Generazione ensemble per {strategy_type} con {len(models)} modelli")
+        
+        strategies = []
+        
+        # Genera strategie con diversi approcci
+        approaches = [
+            ("simple", "technical", 0.1),
+            ("normal", "creative", 0.5),
+            ("complex", "aggressive", 0.3)
+        ]
+        
+        for i, (complexity, style, randomization) in enumerate(approaches):
+            model = models[i % len(models)]
+            try:
+                strategy = self.generate_adaptive_strategy(
+                    strategy_type=strategy_type,
+                    model=model,
+                    complexity=complexity,
+                    style=style,
+                    randomization=randomization,
+                    strategy_name=f"{strategy_name or strategy_type.capitalize()}Ensemble{i+1}"
+                )
+                strategies.append({
+                    'model': model,
+                    'complexity': complexity,
+                    'style': style,
+                    'randomization': randomization,
+                    'code': strategy
+                })
+                print(f"✅ Strategia {i+1} generata con {model} ({complexity}, {style})")
+            except Exception as e:
+                print(f"❌ Errore con strategia {i+1}: {e}")
+        
+        if not strategies:
+            print("❌ Nessuna strategia generata, fallback a strategia standard")
+            return self.generate_futures_strategy(strategy_type, True, strategy_name)
+        
+        # Per ora restituisce la prima strategia valida
+        # In futuro potrebbe fare una sintesi delle migliori
+        print(f"🏆 Ensemble completato: {len(strategies)} strategie generate")
+        return strategies[0]['code']
+
     def _generate_hybrid_strategy(self, prompt: str, model: str, timeout: int, strategy_name: str) -> str:
         """
         Approccio ibrido: prima prova generazione diretta, poi conversione testuale.
@@ -238,64 +392,32 @@ class GeneratorAgent:
         return f'''
 class {strategy_name}(IStrategy):
     minimal_roi = {{"0": 0.05}}
-    stoploss = -0.1
+    stoploss = -0.02
     timeframe = "5m"
     
     def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        dataframe['ema_short'] = ta.EMA(dataframe, timeperiod=10)
-        dataframe['ema_long'] = ta.EMA(dataframe, timeperiod=30)
+        dataframe['rsi'] = ta.RSI(dataframe, timeperiod=14)
+        dataframe['ema_short'] = ta.EMA(dataframe, timeperiod=9)
+        dataframe['ema_long'] = ta.EMA(dataframe, timeperiod=21)
         return dataframe
     
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         dataframe.loc[
+            (dataframe['rsi'] < 30) & 
             (dataframe['ema_short'] > dataframe['ema_long']),
-            'buy'] = 1
+            'enter_long'] = 1
         return dataframe
     
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
         dataframe.loc[
+            (dataframe['rsi'] > 70) | 
             (dataframe['ema_short'] < dataframe['ema_long']),
-            'sell'] = 1
+            'exit_long'] = 1
         return dataframe
 '''
     
-    def _get_default_futures_strategy(self, strategy_type: str, strategy_name: str = None) -> str:
+    def _get_default_futures_strategy(self, strategy_type: str, strategy_name: str) -> str:
         """
         Restituisce una strategia futures di default.
         """
-        if strategy_name is None:
-            strategy_name = f"{strategy_type.capitalize()}Strategy"
-            
-        if strategy_type == "volatility":
-            return f'''
-class {strategy_name}(IStrategy):
-    minimal_roi = {{"0": 0.03, "10": 0.02, "30": 0.01}}
-    stoploss = -0.05
-    timeframe = "5m"
-    
-    def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        dataframe['ema9'] = ta.EMA(dataframe, timeperiod=9)
-        dataframe['ema21'] = ta.EMA(dataframe, timeperiod=21)
-        dataframe['ema50'] = ta.EMA(dataframe, timeperiod=50)
-        dataframe['rsi'] = ta.RSI(dataframe, timeperiod=14)
-        dataframe['atr'] = ta.ATR(dataframe, timeperiod=14)
-        return dataframe
-    
-    def populate_buy_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        dataframe.loc[
-            (dataframe['ema9'] > dataframe['ema21']) &
-            (dataframe['ema21'] > dataframe['ema50']) &
-            (dataframe['rsi'] > 50),
-            'buy'] = 1
-        return dataframe
-    
-    def populate_sell_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
-        dataframe.loc[
-            (dataframe['ema9'] < dataframe['ema21']) &
-            (dataframe['ema21'] < dataframe['ema50']) &
-            (dataframe['rsi'] < 50),
-            'sell'] = 1
-        return dataframe
-'''
-        else:
-            return self._get_default_strategy(strategy_name) 
+        return self._get_default_strategy(strategy_name) 

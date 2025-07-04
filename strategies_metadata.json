@@ -141,5 +141,16 @@
     "backtest_score": null,
     "last_backtest": null,
     "is_active": false
+  },
+  "VolatilityStrategy_cooperative_20250703_184333": {
+    "name": "VolatilityStrategy_cooperative_20250703_184333",
+    "file_path": "user_data/strategies/volatilitystrategy_cooperative_20250703_184333.py",
+    "strategy_type": "volatility",
+    "model_used": "cooperative(cooperative)",
+    "generation_time": "2025-07-03T19:03:41.393830",
+    "validation_status": "validated",
+    "backtest_score": null,
+    "last_backtest": null,
+    "is_active": false
   }
 }

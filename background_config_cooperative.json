@@ -1,0 +1,58 @@
+{
+  "auto_validation": true,
+  "auto_backtest": true,
+  "max_strategies": 50,
+  "generation_interval": 3600,
+  "backtest_interval": 7200,
+  "cleanup_old_strategies": true,
+  "strategy_types": ["volatility", "scalping", "breakout", "momentum"],
+  "models": ["cogito:8b", "mistral:7b-instruct-q4_0", "phi3:mini"],
+  "min_backtest_score": 0.1,
+  "max_concurrent_tasks": 3,
+  
+  "cooperative_mode": {
+    "enable_cooperation": true,
+    "enable_contest_mode": true,
+    "use_llm_voting": true,
+    "parallel_generation_count": 3,
+    "contest_timeout": 0,
+    "voting_timeout": 0,
+    "consensus_timeout": 0,
+    "unlimited_cooperation": true
+  },
+  
+  "model_selection": {
+    "generation": ["cogito:8b", "mistral:7b-instruct-q4_0", "phi3:mini"],
+    "validation": ["cogito:8b", "mistral:7b-instruct-q4_0"],
+    "optimization": "cogito:8b"
+  },
+  
+  "dry_run": {
+    "auto_dry_run": true,
+    "dry_run_interval": 21600,
+    "max_dry_runs": 3,
+    "duration_days": 7,
+    "stake_amount": 100.0,
+    "max_open_trades": 3,
+    "pairs": ["BTC/USDT:USDT", "ETH/USDT:USDT", "SOL/USDT:USDT"],
+    "risk_limits": {
+      "max_risk_per_trade": 0.02,
+      "max_total_risk": 0.1
+    }
+  },
+  
+  "optimization": {
+    "enable_hyperopt": true,
+    "hyperopt_epochs": 100,
+    "hyperopt_timeout": 0
+  },
+  
+  "monitoring": {
+    "enable_cooperative_monitor": true,
+    "monitor_port": 8080,
+    "log_conversations": true,
+    "save_sessions": true,
+    "enable_resource_monitoring": true,
+    "resource_check_interval": 30
+  }
+} 

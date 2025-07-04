@@ -1,0 +1,32 @@
+{
+  "strategy_name": "ContestScalpingcogito_8b",
+  "params": {
+    "roi": {
+      "0": 0.05,
+      "30": 0.025,
+      "60": 0.015,
+      "120": 0.01
+    },
+    "stoploss": {
+      "stoploss": -0.02
+    },
+    "trailing": {
+      "trailing_stop": true,
+      "trailing_stop_positive": 0.01,
+      "trailing_stop_positive_offset": 0.02,
+      "trailing_only_offset_is_reached": true
+    },
+    "max_open_trades": {
+      "max_open_trades": 3
+    },
+    "buy": {
+      "buy_rsi": 20
+    },
+    "sell": {
+      "sell_rsi": 80
+    },
+    "protection": {}
+  },
+  "ft_stratparam_v": 1,
+  "export_time": "2025-07-03 21:27:26.126606+00:00"
+}
