@@ -1,0 +1,60 @@
+
+"""
+TestLLMStrategy - Strategia generata automaticamente
+"""
+
+import logging
+from typing import Dict, List, Optional, Tuple
+from datetime import datetime, timedelta
+from pandas import DataFrame
+import talib.abstract as ta
+from freqtrade.strategy import IStrategy, IntParameter, DecimalParameter
+from freqtrade.persistence import Trade
+
+logger = logging.getLogger(__name__)
+
+class Testllmstrategy(IStrategy):
+    """
+    Strategia di volatility per futures crypto
+    """
+    
+    # Parametri di base
+    minimal_roi = {"0": 0.05, "30": 0.025, "60": 0.015, "120": 0.01}
+    stoploss = -0.02
+    trailing_stop = True
+    trailing_stop_positive = 0.01
+    trailing_stop_positive_offset = 0.02
+    trailing_only_offset_is_reached = True
+    
+    # Parametri ottimizzabili
+    buy_rsi = IntParameter(20, 40, default=30, space="buy")
+    sell_rsi = IntParameter(60, 80, default=70, space="sell")
+    
+    # Timeframe
+    timeframe = "20m"
+    
+    # Indicatori
+    def populate_indicators(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        """
+        Popola gli indicatori tecnici.
+        """
+        dataframe['rsi'] = ta.RSI(dataframe, timeperiod=14)
+        bollinger = ta.BBANDS(dataframe, timeperiod=20)
+        dataframe['bb_lowerband'] = bollinger['lowerband']
+        dataframe['bb_upperband'] = bollinger['upperband']
+        dataframe['atr'] = ta.ATR(dataframe, timeperiod=14)
+        return dataframe
+    
+    def populate_entry_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        """
+        Definisce i segnali di entrata.
+        """
+        dataframe.loc[dataframe['rsi'] < 30, 'enter_long'] = 1
+        return dataframe
+    
+    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:
+        """
+        Definisce i segnali di uscita.
+        """
+        dataframe.loc[dataframe['rsi'] > 70, 'exit_long'] = 1
+        return dataframe

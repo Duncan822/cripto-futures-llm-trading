@@ -1,0 +1,32 @@
+Strategia: VolatilityStrategy_20250704_100639
+Generata il: 2025-07-04T10:06:39.204000
+Approccio: Two-stage generation
+
+
+Strategia di volatility per futures crypto.
+
+INDICATORI:
+- RSI (14): per identificare condizioni di ipercomprato/ipervenduto
+- EMA (9, 21): per trend direction
+- Bollinger Bands (20): per volatilità e breakout
+
+CONDIZIONI DI ENTRATA:
+- RSI < 30 (ipervenduto)
+- EMA 9 > EMA 21 (trend positivo)
+- Prezzo vicino alla banda inferiore di Bollinger
+
+CONDIZIONI DI USCITA:
+- RSI > 70 (ipercomprato)
+- EMA 9 < EMA 21 (trend negativo)
+- Prezzo tocca la banda superiore di Bollinger
+
+GESTIONE RISCHIO:
+- Stoploss: 2%
+- Take profit: 3%
+- Trailing stop: 1% dopo 1% di profitto
+
+PARAMETRI OTTIMIZZABILI:
+- RSI buy/sell levels
+- EMA periods
+- Bollinger Bands deviation
+- ROI e stoploss values

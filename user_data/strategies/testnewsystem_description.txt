@@ -1,0 +1,15 @@
+Strategia: TestNewSystem
+Generata il: 2025-07-04T10:55:09.558429
+Approccio: Two-stage generation
+
+1. Indicatori tecnici da utilizzare e parametri:
+   - Bollinger Bands con un periodo di 20m saranno i principali indicatori per rilevare potenziali breakout in mercati volatili. I bande superiori verranno impostate a tre deviazioni standard sopra il prezzo, mentre le bande inferiori e medie vengono posizionate due deviazioni standard sottostanti al prezzo di chiusura del giorno precedente.
+   - ATR (Average True Range) con un periodo di 14m per misurare la volatilità intraday, che aiuterà a determinare le dimensioni appropriate dei posizionamenti e il stop loss.
+   - RSI (Relative Strength Index) con un periodo di 14m per identificare potenziali punti di acquisto o vendita basati sulla forza relativa del mercato, idealmente quando l'RSI scende sotto i 30-emergente e sale sopra i 70.
+   - OBV (On Balance Volume) con un periodo di 14m per valutare la liquidità attuale sul mercato ed è utile in combinazione con il RSI, specialmente quando l'OBV aumenta mentre lner si avvicina al livello massimo.
+   - EMA (Exponential Moving Average) di 50m per identificare i trend a lungo termine e le potenziali aree di supporto o resistenza.
+
+2. Condizioni di entrata:
+   - Acquistiamo quando il prezzo si avvicina alle bande superiori mentre l'RSI è sotto i 30, indicando una forte discesa del mercato e potenziale acquisto a basso costo.
+   - Vendiamo quando il prezzo colpisce le bande inferiori con un RSI sopra i 70, suggerendo che la forza relativa è alta ed è probabile un rialzamento o una fase di consolidazione prima del potenziale calo a basso costo.
+   - Possiamo anche considerare l'acquisto quando il prezzo colpisce le bande superiori con OBV in aumento, indicando che la

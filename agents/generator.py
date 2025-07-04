@@ -1,46 +1,68 @@
 """
 Agente Generatore: genera nuove strategie di trading compatibili con Freqtrade.
 Ottimizzato per futures volatili e velocità di risposta.
-Approccio ibrido: generazione diretta + conversione testuale.
+Approccio a due stadi: generazione testuale + conversione in codice.
 """
 
 from llm_utils import query_ollama, query_ollama_fast, get_model_speed_ranking, get_optimal_timeout, estimate_prompt_complexity
-from .strategy_converter import StrategyConverter
+from .two_stage_generator import TwoStageGenerator
 import re
 
 class GeneratorAgent:
     def __init__(self, default_model: str = "phi3"):
         self.default_model = default_model
         self.fast_models = get_model_speed_ranking()
-        self.converter = StrategyConverter()
+        self.two_stage_generator = TwoStageGenerator(
+            text_model="phi3:mini",
+            code_model="mistral:7b-instruct-q4_0"
+        )
 
-    def generate_strategy(self, prompt: str, model: str | None = None, timeout: int = None, use_hybrid: bool = True, strategy_name: str = None) -> str:
+    def generate_strategy(self, prompt: str, model: str | None = None, timeout: int | None = None, use_hybrid: bool = True, strategy_name: str | None = None) -> str:
         """
-        Genera una nuova strategia FreqTrade usando approccio ibrido.
+        Genera una nuova strategia FreqTrade usando approccio a due stadi.
         
         Args:
             prompt: Il prompt per la generazione
             model: Il modello da utilizzare (default: phi3 per velocità)
-            timeout: Timeout in secondi (se None, viene calcolato automaticamente)
-            use_hybrid: Se True, usa approccio ibrido (default: True)
+            timeout: Timeout in secondi (ignorato nel sistema a due stadi)
+            use_hybrid: Se True, usa approccio a due stadi (default: True)
             strategy_name: Nome della classe strategia (se None, viene estratto dal prompt)
         """
-        model_to_use = model or self.default_model
-        
-        # Calcola timeout ottimale se non fornito
-        if timeout is None:
-            complexity = estimate_prompt_complexity(prompt)
-            timeout = get_optimal_timeout(model_to_use, complexity)
-            print(f"⏱️ Timeout calcolato automaticamente: {timeout}s per {model_to_use} ({complexity})")
-        
         # Estrai il nome della strategia se non fornito
         if strategy_name is None:
             strategy_name = self._extract_strategy_name(prompt)
         
-        if use_hybrid:
-            return self._generate_hybrid_strategy(prompt, model_to_use, timeout, strategy_name)
-        else:
-            return self._generate_direct_strategy(prompt, model_to_use, timeout, strategy_name)
+        # Estrai il tipo di strategia dal prompt
+        strategy_type = self._extract_strategy_type(prompt)
+        
+        print(f"🔄 Generazione strategia {strategy_type} con sistema a due stadi...")
+        
+        try:
+            # Usa il sistema a due stadi
+            result = self.two_stage_generator.generate_strategy(
+                strategy_type=strategy_type,
+                complexity="normal",
+                style="technical",
+                randomization=0.3,
+                strategy_name=strategy_name
+            )
+            
+            return result['code']
+            
+        except Exception as e:
+            print(f"❌ Errore nel sistema a due stadi: {e}")
+            print("🔄 Fallback al sistema legacy...")
+            return self._generate_fallback_strategy(strategy_name)
+    
+    def _extract_strategy_type(self, prompt: str) -> str:
+        """Estrae il tipo di strategia dal prompt."""
+        strategy_types = ['volatility', 'scalping', 'momentum', 'breakout', 'adaptive']
+        
+        for strategy_type in strategy_types:
+            if strategy_type in prompt.lower():
+                return strategy_type
+        
+        return "volatility"  # Default
     
     def generate_adaptive_strategy(self, 
                                  strategy_type: str = "volatility",
@@ -255,46 +277,37 @@ class GeneratorAgent:
             print(f"❌ Errore nella conversione testuale: {e}")
             return self._get_default_strategy(strategy_name)
     
-    def generate_futures_strategy(self, strategy_type: str = "volatility", use_hybrid: bool = True, strategy_name: str = None) -> str:
+    def generate_futures_strategy(self, strategy_type: str = "volatility", use_hybrid: bool = True, strategy_name: str | None = None) -> str:
         """
-        Genera una strategia specifica per futures volatili.
+        Genera una strategia specifica per futures crypto usando sistema a due stadi.
         
         Args:
             strategy_type: Tipo di strategia ("volatility", "scalping", "breakout", "momentum", "adaptive")
-            use_hybrid: Se True, usa approccio ibrido (default: True)
-            strategy_name: Nome della classe strategia (se None, viene generato automaticamente)
+            use_hybrid: Se True, usa approccio a due stadi
+            strategy_name: Nome della classe strategia
+            
+        Returns:
+            Codice della strategia generata
         """
-        from prompts.improved_futures_prompts import (
-            get_improved_scalping_prompt,
-            get_improved_momentum_prompt,
-            get_improved_breakout_prompt,
-            get_improved_volatility_prompt,
-            get_improved_adaptive_prompt
-        )
-        
-        # Seleziona il prompt migliorato appropriato
-        prompts = {
-            "volatility": get_improved_volatility_prompt(),
-            "scalping": get_improved_scalping_prompt(),
-            "breakout": get_improved_breakout_prompt(),
-            "momentum": get_improved_momentum_prompt(),
-            "adaptive": get_improved_adaptive_prompt()
-        }
-        
-        prompt = prompts.get(strategy_type, get_improved_volatility_prompt())
-        
-        # Genera nome strategia se non fornito
         if strategy_name is None:
             strategy_name = f"{strategy_type.capitalize()}Strategy"
         
-        # Usa il modello più veloce disponibile
-        fastest_model = self.fast_models[0] if self.fast_models else "phi3"
+        print(f"🚀 Generazione strategia futures {strategy_type} con sistema a due stadi...")
         
         try:
-            print(f"🚀 Generazione strategia {strategy_type} con {fastest_model} (ibrido: {use_hybrid})...")
-            return self.generate_strategy(prompt, fastest_model, timeout=1800, use_hybrid=use_hybrid, strategy_name=strategy_name)
+            # Usa il sistema a due stadi
+            result = self.two_stage_generator.generate_strategy(
+                strategy_type=strategy_type,
+                complexity="normal",
+                style="technical",
+                randomization=0.3,
+                strategy_name=strategy_name
+            )
+            
+            return result['code']
+            
         except Exception as e:
-            print(f"❌ Errore nella generazione strategia {strategy_type}: {e}")
+            print(f"❌ Errore nel sistema a due stadi: {e}")
             return self._get_default_futures_strategy(strategy_type, strategy_name)
     
     def _extract_strategy_name(self, prompt: str) -> str:

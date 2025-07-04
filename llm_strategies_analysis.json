@@ -1,0 +1,440 @@
+{
+  "individual_strategies": {
+    "user_data/strategies/momentumstrategy_cogito_3b_20250701_133543.py": {
+      "filename": "momentumstrategy_cogito_3b_20250701_133543.py",
+      "file_size": 806,
+      "lines_of_code": 26,
+      "syntax_valid": false,
+      "class_name": null,
+      "indicators_used": [],
+      "entry_conditions": [],
+      "exit_conditions": [],
+      "risk_management": {},
+      "optimization_params": [],
+      "code_quality": {},
+      "potential_issues": [
+        "Errore di sintassi: invalid decimal literal (<unknown>, line 2)"
+      ],
+      "strengths": [],
+      "model_used": "cogito",
+      "strategy_type": "momentum",
+      "generation_date": "20250701_133543"
+    },
+    "user_data/strategies/scalpingstrategy_cogito_8b_20250630_132110.py": {
+      "filename": "scalpingstrategy_cogito_8b_20250630_132110.py",
+      "file_size": 806,
+      "lines_of_code": 26,
+      "syntax_valid": false,
+      "class_name": null,
+      "indicators_used": [],
+      "entry_conditions": [],
+      "exit_conditions": [],
+      "risk_management": {},
+      "optimization_params": [],
+      "code_quality": {},
+      "potential_issues": [
+        "Errore di sintassi: invalid decimal literal (<unknown>, line 2)"
+      ],
+      "strengths": [],
+      "model_used": "cogito",
+      "strategy_type": "scalping",
+      "generation_date": "20250630_132110"
+    },
+    "user_data/strategies/scalpingstrategy_mistral_7b_instruct_q4_0_20250701_112634.py": {
+      "filename": "scalpingstrategy_mistral_7b_instruct_q4_0_20250701_112634.py",
+      "file_size": 821,
+      "lines_of_code": 26,
+      "syntax_valid": false,
+      "class_name": null,
+      "indicators_used": [],
+      "entry_conditions": [],
+      "exit_conditions": [],
+      "risk_management": {},
+      "optimization_params": [],
+      "code_quality": {},
+      "potential_issues": [
+        "Errore di sintassi: invalid decimal literal (<unknown>, line 2)"
+      ],
+      "strengths": [],
+      "model_used": "mistral",
+      "strategy_type": "scalping",
+      "generation_date": "20250701_112634"
+    },
+    "user_data/strategies/volatilitystrategy_mistral_7b_instruct_q4_0_20250701_004147.py": {
+      "filename": "volatilitystrategy_mistral_7b_instruct_q4_0_20250701_004147.py",
+      "file_size": 823,
+      "lines_of_code": 26,
+      "syntax_valid": false,
+      "class_name": null,
+      "indicators_used": [],
+      "entry_conditions": [],
+      "exit_conditions": [],
+      "risk_management": {},
+      "optimization_params": [],
+      "code_quality": {},
+      "potential_issues": [
+        "Errore di sintassi: invalid decimal literal (<unknown>, line 2)"
+      ],
+      "strengths": [],
+      "model_used": "mistral",
+      "strategy_type": "volatility",
+      "generation_date": "20250701_004147"
+    },
+    "user_data/strategies/scalpingstrategy_mistral_7b_instruct_q4_0_20250704_092117.py": {
+      "filename": "scalpingstrategy_mistral_7b_instruct_q4_0_20250704_092117.py",
+      "file_size": 1719,
+      "lines_of_code": 58,
+      "syntax_valid": true,
+      "class_name": "ScalpingStrategy_mistral_7b_instruct_q4_0_20250704_092117",
+      "indicators_used": [
+        "RSI",
+        "EMA"
+      ],
+      "entry_conditions": [
+        "dataframe['rsi'] < 30"
+      ],
+      "exit_conditions": [
+        "dataframe['rsi'] < 30, 'enter_long'] = 1\n        return dataframe\n    \n    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:\n        \"\"\"\n        Definisce i segnali di uscita.\n        \"\"\"\n        dataframe.loc[dataframe['rsi'] > 70"
+      ],
+      "risk_management": {
+        "stoploss": true,
+        "trailing_stop": true,
+        "roi": true
+      },
+      "optimization_params": [],
+      "code_quality": {
+        "has_docstrings": true,
+        "has_comments": false,
+        "has_logging": true,
+        "has_type_hints": true,
+        "has_error_handling": false,
+        "code_complexity": 0
+      },
+      "potential_issues": [
+        "Strategia troppo semplice"
+      ],
+      "strengths": [
+        "Ha trailing stop",
+        "Documentazione presente"
+      ],
+      "model_used": "mistral",
+      "strategy_type": "scalping",
+      "generation_date": "20250704_092117"
+    },
+    "user_data/strategies/breakoutstrategy_phi3_mini_20250630_202331.py": {
+      "filename": "breakoutstrategy_phi3_mini_20250630_202331.py",
+      "file_size": 806,
+      "lines_of_code": 26,
+      "syntax_valid": false,
+      "class_name": null,
+      "indicators_used": [],
+      "entry_conditions": [],
+      "exit_conditions": [],
+      "risk_management": {},
+      "optimization_params": [],
+      "code_quality": {},
+      "potential_issues": [
+        "Errore di sintassi: invalid syntax (<unknown>, line 2)"
+      ],
+      "strengths": [],
+      "model_used": "phi",
+      "strategy_type": "breakout",
+      "generation_date": "20250630_202331"
+    },
+    "user_data/strategies/volatilitystrategy_cogito_8b_20250630_223230.py": {
+      "filename": "volatilitystrategy_cogito_8b_20250630_223230.py",
+      "file_size": 808,
+      "lines_of_code": 26,
+      "syntax_valid": false,
+      "class_name": null,
+      "indicators_used": [],
+      "entry_conditions": [],
+      "exit_conditions": [],
+      "risk_management": {},
+      "optimization_params": [],
+      "code_quality": {},
+      "potential_issues": [
+        "Errore di sintassi: invalid decimal literal (<unknown>, line 2)"
+      ],
+      "strengths": [],
+      "model_used": "cogito",
+      "strategy_type": "volatility",
+      "generation_date": "20250630_223230"
+    },
+    "user_data/strategies/contest_cogito_8b_scalping.py": {
+      "filename": "contest_cogito_8b_scalping.py",
+      "file_size": 2577,
+      "lines_of_code": 76,
+      "syntax_valid": true,
+      "class_name": "ContestScalpingcogito_8b",
+      "indicators_used": [
+        "RSI",
+        "MACD",
+        "BBANDS",
+        "EMA"
+      ],
+      "entry_conditions": [
+        "dataframe['rsi'] < self.buy_rsi.value"
+      ],
+      "exit_conditions": [
+        "dataframe['rsi'] < self.buy_rsi.value, 'enter_long'] = 1\n        return dataframe\n    \n    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:\n        \"\"\"\n        Definisce i segnali di uscita.\n        \"\"\"\n        dataframe.loc[dataframe['rsi'] > self.sell_rsi.value"
+      ],
+      "risk_management": {
+        "stoploss": true,
+        "trailing_stop": true,
+        "roi": true
+      },
+      "optimization_params": [
+        "",
+        "buy_rsi",
+        "sell_rsi"
+      ],
+      "code_quality": {
+        "has_docstrings": true,
+        "has_comments": true,
+        "has_logging": true,
+        "has_type_hints": true,
+        "has_error_handling": false,
+        "code_complexity": 0
+      },
+      "potential_issues": [
+        "Strategia troppo semplice"
+      ],
+      "strengths": [
+        "Usa multipli indicatori",
+        "Ha trailing stop",
+        "Parametri ottimizzabili",
+        "Documentazione presente"
+      ],
+      "model_used": "cogito",
+      "strategy_type": "scalping",
+      "generation_date": "unknown"
+    },
+    "user_data/strategies/volatilitystrategy_cogito_3b_20250701_193633.py": {
+      "filename": "volatilitystrategy_cogito_3b_20250701_193633.py",
+      "file_size": 808,
+      "lines_of_code": 26,
+      "syntax_valid": false,
+      "class_name": null,
+      "indicators_used": [],
+      "entry_conditions": [],
+      "exit_conditions": [],
+      "risk_management": {},
+      "optimization_params": [],
+      "code_quality": {},
+      "potential_issues": [
+        "Errore di sintassi: invalid decimal literal (<unknown>, line 2)"
+      ],
+      "strengths": [],
+      "model_used": "cogito",
+      "strategy_type": "volatility",
+      "generation_date": "20250701_193633"
+    },
+    "user_data/strategies/momentumstrategy_cogito_3b_20250701_025103.py": {
+      "filename": "momentumstrategy_cogito_3b_20250701_025103.py",
+      "file_size": 806,
+      "lines_of_code": 26,
+      "syntax_valid": false,
+      "class_name": null,
+      "indicators_used": [],
+      "entry_conditions": [],
+      "exit_conditions": [],
+      "risk_management": {},
+      "optimization_params": [],
+      "code_quality": {},
+      "potential_issues": [
+        "Errore di sintassi: invalid decimal literal (<unknown>, line 2)"
+      ],
+      "strengths": [],
+      "model_used": "cogito",
+      "strategy_type": "momentum",
+      "generation_date": "20250701_025103"
+    },
+    "user_data/strategies/breakoutstrategy_mistral_7b_instruct_q4_0_20250630_173929.py": {
+      "filename": "breakoutstrategy_mistral_7b_instruct_q4_0_20250630_173929.py",
+      "file_size": 821,
+      "lines_of_code": 26,
+      "syntax_valid": false,
+      "class_name": null,
+      "indicators_used": [],
+      "entry_conditions": [],
+      "exit_conditions": [],
+      "risk_management": {},
+      "optimization_params": [],
+      "code_quality": {},
+      "potential_issues": [
+        "Errore di sintassi: invalid decimal literal (<unknown>, line 2)"
+      ],
+      "strengths": [],
+      "model_used": "mistral",
+      "strategy_type": "breakout",
+      "generation_date": "20250630_173929"
+    },
+    "user_data/strategies/scalpingstrategy_phi3_mini_20250630_153020.py": {
+      "filename": "scalpingstrategy_phi3_mini_20250630_153020.py",
+      "file_size": 806,
+      "lines_of_code": 26,
+      "syntax_valid": false,
+      "class_name": null,
+      "indicators_used": [],
+      "entry_conditions": [],
+      "exit_conditions": [],
+      "risk_management": {},
+      "optimization_params": [],
+      "code_quality": {},
+      "potential_issues": [
+        "Errore di sintassi: invalid syntax (<unknown>, line 2)"
+      ],
+      "strengths": [],
+      "model_used": "phi",
+      "strategy_type": "scalping",
+      "generation_date": "20250630_153020"
+    },
+    "user_data/strategies/volatilitystrategy_cooperative_20250703_184333.py": {
+      "filename": "volatilitystrategy_cooperative_20250703_184333.py",
+      "file_size": 1991,
+      "lines_of_code": 63,
+      "syntax_valid": true,
+      "class_name": "VolatilityStrategy_cooperative_20250703_184333",
+      "indicators_used": [
+        "RSI",
+        "ATR",
+        "BBANDS",
+        "EMA"
+      ],
+      "entry_conditions": [
+        "dataframe['rsi'] < 30"
+      ],
+      "exit_conditions": [
+        "dataframe['rsi'] < 30, 'enter_long'] = 1\n        return dataframe\n    \n    def populate_exit_trend(self, dataframe: DataFrame, metadata: dict) -> DataFrame:\n        \"\"\"\n        Definisce i segnali di uscita.\n        \"\"\"\n        dataframe.loc[dataframe['rsi'] > 70"
+      ],
+      "risk_management": {
+        "stoploss": true,
+        "trailing_stop": true,
+        "roi": true
+      },
+      "optimization_params": [],
+      "code_quality": {
+        "has_docstrings": true,
+        "has_comments": false,
+        "has_logging": true,
+        "has_type_hints": true,
+        "has_error_handling": false,
+        "code_complexity": 0
+      },
+      "potential_issues": [
+        "Strategia troppo semplice"
+      ],
+      "strengths": [
+        "Usa multipli indicatori",
+        "Ha trailing stop",
+        "Documentazione presente"
+      ],
+      "model_used": "cooperative",
+      "strategy_type": "volatility",
+      "generation_date": "20250703_184333"
+    },
+    "user_data/strategies/volatilitystrategy_mistral_7b_instruct_q4_0_20250701_083435.py": {
+      "filename": "volatilitystrategy_mistral_7b_instruct_q4_0_20250701_083435.py",
+      "file_size": 823,
+      "lines_of_code": 26,
+      "syntax_valid": false,
+      "class_name": null,
+      "indicators_used": [],
+      "entry_conditions": [],
+      "exit_conditions": [],
+      "risk_management": {},
+      "optimization_params": [],
+      "code_quality": {},
+      "potential_issues": [
+        "Errore di sintassi: invalid decimal literal (<unknown>, line 2)"
+      ],
+      "strengths": [],
+      "model_used": "mistral",
+      "strategy_type": "volatility",
+      "generation_date": "20250701_083435"
+    },
+    "user_data/strategies/momentumstrategy_mistral_7b_instruct_q4_0_20250701_062543.py": {
+      "filename": "momentumstrategy_mistral_7b_instruct_q4_0_20250701_062543.py",
+      "file_size": 821,
+      "lines_of_code": 26,
+      "syntax_valid": false,
+      "class_name": null,
+      "indicators_used": [],
+      "entry_conditions": [],
+      "exit_conditions": [],
+      "risk_management": {},
+      "optimization_params": [],
+      "code_quality": {},
+      "potential_issues": [
+        "Errore di sintassi: invalid decimal literal (<unknown>, line 2)"
+      ],
+      "strengths": [],
+      "model_used": "mistral",
+      "strategy_type": "momentum",
+      "generation_date": "20250701_062543"
+    },
+    "user_data/strategies/volatilitystrategy_mistral_7b_instruct_q4_0_20250701_172715.py": {
+      "filename": "volatilitystrategy_mistral_7b_instruct_q4_0_20250701_172715.py",
+      "file_size": 823,
+      "lines_of_code": 26,
+      "syntax_valid": false,
+      "class_name": null,
+      "indicators_used": [],
+      "entry_conditions": [],
+      "exit_conditions": [],
+      "risk_management": {},
+      "optimization_params": [],
+      "code_quality": {},
+      "potential_issues": [
+        "Errore di sintassi: invalid decimal literal (<unknown>, line 2)"
+      ],
+      "strengths": [],
+      "model_used": "mistral",
+      "strategy_type": "volatility",
+      "generation_date": "20250701_172715"
+    }
+  },
+  "aggregate_analysis": {
+    "total_strategies": 16,
+    "syntax_valid_count": 3,
+    "models_used": {
+      "cogito": 6,
+      "mistral": 7,
+      "phi": 2,
+      "cooperative": 1
+    },
+    "strategy_types": {
+      "momentum": 3,
+      "scalping": 5,
+      "volatility": 6,
+      "breakout": 2
+    },
+    "common_indicators": {
+      "RSI": 3,
+      "EMA": 3,
+      "MACD": 1,
+      "BBANDS": 2,
+      "ATR": 1
+    },
+    "common_issues": {
+      "Errore di sintassi: invalid decimal literal (<unknown>, line 2)": 11,
+      "Strategia troppo semplice": 3,
+      "Errore di sintassi: invalid syntax (<unknown>, line 2)": 2
+    },
+    "quality_metrics": {
+      "avg_complexity": 0.0,
+      "has_docstrings": 3,
+      "has_optimization": 1,
+      "has_risk_management": 3
+    }
+  },
+  "recommendations": [
+    "Problema pi\u00f9 comune: Errore di sintassi: invalid decimal literal (<unknown>, line 2) (11 strategie)",
+    "Migliorare la documentazione delle strategie",
+    "Aggiungere pi\u00f9 parametri ottimizzabili",
+    "Migliorare la gestione del rischio",
+    "Modello pi\u00f9 utilizzato: mistral (7 strategie)",
+    "Indicatore pi\u00f9 utilizzato: RSI (3 volte)"
+  ]
+}

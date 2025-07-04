@@ -1,0 +1,14 @@
+Strategia: TestLLMStrategy
+Generata il: 2025-07-04T10:19:58.446621
+Approccio: Two-stage generation
+
+1. Indicatori tecnici da utilizzare e parametri:
+   - Bollinger Bands con un periodo di 20m saranno impiegati per identificare i potenziali breakout in base alla loro posizione rispetto al prezzo del token crypto, insieme a una banda superiore che si allarga rapidamente. I valori delle bande dovrebbero essere configurati intorno ai livelli di supporto e resistenza attuali dei mercati volatili.
+   - ATR (Average True Range) con un periodo di 14m per misurare la velocità del movimento a breve termine, che può indicare quando il trading potrebbe essere più rischioso o meno in quel momento specifico.
+   - RSI (Relative Strength Index) con un periodo di 14m per identificare i punti di overbought e underbought del mercato crypto; punteggi vicini a 70 indicano il tradimento, mentre quelli sotto l'85 suggeriscono potenziali acquisti.
+   - Ichimoku con un periodo standard (9-period) per visualizzare la posizione di chiusura del mercato e i movimenti su più periodi temporali; sarà utilizzato insieme al suo indicatore della linea dell'equilibrio, che aiuta a determinare il momento ottimale delle operazioni.
+   - OBV (On-Balance Volume) con un periodo di 14m per misurare la liquidità e l'intensità del trading; sarà utilizzato come indicatore complementare al bollinger band, ATR e RSI.
+
+2. Condizioni di entrata:
+   - Acquistare quando il prezzo si avvicina alla linea superiore dei Bollinger Bands con un'ampia banda che indica alta volatilità ma potenziale movimento verso l'alto, e contemporaneamente ATR alto per indicare una forte velocità di trading.
+   - Vendere quando il prezzo si avvicina alla linea inferiore dei Bollinger Bands con un'ampia banda che indica alta volatilità ma potenziale movimento verso il basso, e contemporaneamente ATR alto per indicare una forte velocità di trad

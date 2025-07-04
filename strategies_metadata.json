@@ -152,5 +152,16 @@
     "backtest_score": null,
     "last_backtest": null,
     "is_active": false
+  },
+  "ScalpingStrategy_mistral_7b_instruct_q4_0_20250704_092117": {
+    "name": "ScalpingStrategy_mistral_7b_instruct_q4_0_20250704_092117",
+    "file_path": "user_data/strategies/scalpingstrategy_mistral_7b_instruct_q4_0_20250704_092117.py",
+    "strategy_type": "scalping",
+    "model_used": "mistral:7b-instruct-q4_0",
+    "generation_time": "2025-07-04T09:31:14.713787",
+    "validation_status": "validated",
+    "backtest_score": null,
+    "last_backtest": null,
+    "is_active": false
   }
 }
