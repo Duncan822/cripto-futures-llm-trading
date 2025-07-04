@@ -119,36 +119,36 @@ class CooperativeGeneratorAgent:
         # Fallback alla cooperazione se disponibile
         if self.enable_cooperation and LLM_UTILS_AVAILABLE:
             logger.info("🤝 Usando generazione cooperativa...")
-            try:
-                # Avvia sessione cooperativa se il monitor è disponibile
-                session_id = ""
-                if COOPERATIVE_MONITOR_AVAILABLE:
-                    session_id = track_cooperative_session(
-                        "cooperative_generation",
-                        strategy_type,
-                        self.strategy_generators
-                    )
+        try:
+            # Avvia sessione cooperativa se il monitor è disponibile
+            session_id = ""
+            if COOPERATIVE_MONITOR_AVAILABLE:
+                session_id = track_cooperative_session(
+                    "cooperative_generation",
+                    strategy_type,
+                    self.strategy_generators
+                )
+            
+            logger.info(f"🤝 Generazione cooperativa per {strategy_type}")
+            
+            # Scegli il metodo di generazione cooperativa
+            if self.enable_contest_mode and len(self.strategy_generators) >= 2:
+                return self._generate_with_contest(strategy_type, use_hybrid, strategy_name, session_id)
+            elif self.use_llm_voting and len(self.strategy_generators) >= 2:
+                return self._generate_with_voting(strategy_type, use_hybrid, strategy_name, session_id)
+            else:
+                return self._generate_with_consensus(strategy_type, use_hybrid, strategy_name, session_id)
                 
-                logger.info(f"🤝 Generazione cooperativa per {strategy_type}")
-                
-                # Scegli il metodo di generazione cooperativa
-                if self.enable_contest_mode and len(self.strategy_generators) >= 2:
-                    return self._generate_with_contest(strategy_type, use_hybrid, strategy_name, session_id)
-                elif self.use_llm_voting and len(self.strategy_generators) >= 2:
-                    return self._generate_with_voting(strategy_type, use_hybrid, strategy_name, session_id)
-                else:
-                    return self._generate_with_consensus(strategy_type, use_hybrid, strategy_name, session_id)
-                    
-            except Exception as e:
-                logger.error(f"❌ Errore nella generazione cooperativa: {e}")
-                
-                # Termina sessione cooperativa se attiva
-                if session_id and COOPERATIVE_MONITOR_AVAILABLE:
-                    end_cooperative_session(session_id, "failed", {"error": str(e)})
-        
+        except Exception as e:
+            logger.error(f"❌ Errore nella generazione cooperativa: {e}")
+            
+            # Termina sessione cooperativa se attiva
+            if session_id and COOPERATIVE_MONITOR_AVAILABLE:
+                end_cooperative_session(session_id, "failed", {"error": str(e)})
+            
         # Fallback finale al generatore standard
         logger.info("🔄 Fallback al generatore standard")
-        return self.standard_generator.generate_futures_strategy(strategy_type, use_hybrid, strategy_name)
+            return self.standard_generator.generate_futures_strategy(strategy_type, use_hybrid, strategy_name)
     
     def _generate_with_contest(self, strategy_type: str, use_hybrid: bool, strategy_name: str, session_id: str) -> str:
         """Genera strategia usando contest tra LLM."""

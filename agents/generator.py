@@ -217,7 +217,7 @@ class GeneratorAgent:
         # In futuro potrebbe fare una sintesi delle migliori
         print(f"🏆 Ensemble completato: {len(strategies)} strategie generate")
         return strategies[0]['code']
-
+    
     def _generate_hybrid_strategy(self, prompt: str, model: str, timeout: int, strategy_name: str) -> str:
         """
         Approccio ibrido: prima prova generazione diretta, poi conversione testuale.
@@ -433,4 +433,4 @@ class {strategy_name}(IStrategy):
         """
         Restituisce una strategia futures di default.
         """
-        return self._get_default_strategy(strategy_name) 
+            return self._get_default_strategy(strategy_name) 
