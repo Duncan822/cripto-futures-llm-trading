@@ -6,8 +6,10 @@ Seconda fase: converte descrizioni testuali in codice FreqTrade corretto
 
 import re
 import ast
+import time
 from typing import Dict, List, Any, Optional
 from llm_utils import query_ollama_fast
+from .timeout_manager import get_optimal_timeout, record_performance
 
 class FreqTradeCodeConverter:
     def __init__(self, default_model: str = "mistral:7b-instruct-q4_0"):
@@ -165,12 +167,38 @@ class {class_name}(IStrategy):
         # Crea prompt specializzato per FreqTrade
         prompt = self._create_freqtrade_prompt(description, strategy_name, strategy_type, extracted_info)
         
+        # Calcola timeout ottimale
+        timeout = get_optimal_timeout(
+            model=self.default_model,
+            phase="code_conversion",
+            complexity="normal",
+            strategy_type=strategy_type
+        )
+        
+        start_time = time.time()
+        success = False
+        
         try:
-            code = query_ollama_fast(prompt, self.default_model, timeout=600)
+            print(f"⚡ Invio richiesta a {self.default_model} (timeout: {timeout}s)...")
+            code = query_ollama_fast(prompt, self.default_model, timeout=timeout)
+            print(f"✅ Risposta ricevuta da {self.default_model}")
+            success = True
             return self._clean_generated_code(code)
         except Exception as e:
             print(f"❌ Errore nella generazione codice: {e}")
+            print("🔄 Fallback a template predefinito...")
             return self._generate_template_code(strategy_name, strategy_type, extracted_info)
+        finally:
+            # Registra performance
+            actual_time = time.time() - start_time
+            record_performance(
+                model=self.default_model,
+                phase="code_conversion",
+                strategy_type=strategy_type,
+                actual_time=actual_time,
+                success=success,
+                timeout_used=timeout
+            )
     
     def _create_freqtrade_prompt(self, 
                                description: str, 

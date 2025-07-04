@@ -5,8 +5,10 @@ Prima fase: genera logica di trading in linguaggio naturale
 """
 
 import random
+import time
 from typing import Dict, List, Any, Optional
 from llm_utils import query_ollama_fast
+from .timeout_manager import get_optimal_timeout, record_performance
 
 class StrategyTextGenerator:
     def __init__(self, default_model: str = "phi3:mini"):
@@ -74,12 +76,38 @@ class StrategyTextGenerator:
         # Crea prompt per la generazione
         prompt = self._create_description_prompt(template, complexity, style, randomization)
         
+        # Calcola timeout ottimale
+        timeout = get_optimal_timeout(
+            model=self.default_model,
+            phase="text_generation",
+            complexity=complexity,
+            strategy_type=strategy_type
+        )
+        
+        start_time = time.time()
+        success = False
+        
         try:
-            description = query_ollama_fast(prompt, self.default_model, timeout=300)
+            print(f"⚡ Invio richiesta a {self.default_model} (timeout: {timeout}s)...")
+            description = query_ollama_fast(prompt, self.default_model, timeout=timeout)
+            print(f"✅ Risposta ricevuta da {self.default_model}")
+            success = True
             return self._clean_description(description)
         except Exception as e:
             print(f"❌ Errore nella generazione descrizione: {e}")
+            print("🔄 Fallback a descrizione predefinita...")
             return self._generate_fallback_description(template, strategy_type)
+        finally:
+            # Registra performance
+            actual_time = time.time() - start_time
+            record_performance(
+                model=self.default_model,
+                phase="text_generation",
+                strategy_type=strategy_type,
+                actual_time=actual_time,
+                success=success,
+                timeout_used=timeout
+            )
     
     def _create_description_prompt(self, template: Dict[str, Any], complexity: str, style: str, randomization: float) -> str:
         """Crea il prompt per la generazione della descrizione."""

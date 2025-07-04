@@ -1,0 +1,14 @@
+Strategia: TestTimeoutOptimized
+Generata il: 2025-07-04T11:16:13.067757
+Approccio: Two-stage generation
+
+1. **Indicatori tecnici da utilizzare e parametri:**
+   - MACD (Moving Average Convergence Divergence): Utilizzeremo il short-term EMA di 12 MONTHI per il filtro della velocità del trend, l'EMA di 26 MONTHI come indicatore principale e un signal line con parametri standard.
+   - RSI (Relative Strength Index): Con una finestra temporale di 14 mOUNDS, questo indice ci aiuterà a identificare potenziali punti di acquisto o vendita quando il mercato è sotto-valutato o sopra-valorizzato.
+   - ADX (Average Directional Index): Con una finestra temporale di 14 mOUNDS, questo indice ci aiuterà a valutare la forza e lneranza del trend attuale. Un ADX superiore al 25 è considerato forte.
+   - Stochastic: Utilizzeremo il %K con una finestra temporale di 3 mOUNDS per identificare i punti in cui il prezzo si sta muovendo rapidamente verso l'alto o verso il basso, indicando potenziali opportunità di acquisto/vendita.
+   - OBV (On-Balance Volume): Con una finestra temporale di 14 mOUNDS, questo indice ci aiuterà a confermare la forza del trend e le condizioni d'acquisto o vendita basate sulla volume corrente rispetto alla media delle ultime 14 settimane.
+
+2. **Condizioni di entrata:**
+   - Acquistiamo quando il MACD si inverte verso un positivo, l'ADX è superiore al 25 e la RSI si trova sotto i 30 (sotto-valorizzata). Inoltre, dobbiamo assicurarci che lo Stochastic sia sopra il 80 per indicare una forte corsa verso l'alto del prezzo.
+   - Vendiamo quando il MACD si inverte verso un negativo, la RSI è superiore ai 70 (sopra-valorizzata) e lo Stochastic
